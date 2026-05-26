@@ -209,7 +209,7 @@ class pSCT:
         outside the detectable area.
         Returns: true if any centroid is outside the image, false otherwise
 
-        NOTE: this method uses the true centroids. true centroid locations are not accessible
+        NOTE: this method might use the true centroids. true centroid locations are not accessible
         on a real telescope, so use this method with caution
     """
     def any_centroid_outside_image(self):
@@ -224,7 +224,7 @@ class pSCT:
 
         Returns: true if all the detected centroids are at the center of the screen, false otherwise
 
-        NOTE: this method uses the true centroids. true centroid locations are not accessible
+        NOTE: this method might use the true centroids. true centroid locations are not accessible
         on a real telescope, so use this method with caution
     """
     def all_centroids_at_center(self, centroid_locations=None, success_radius=5):

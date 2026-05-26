@@ -8,30 +8,35 @@ from PSCT.image_analyzer import image_analyzer
     This class represents how the agent interacts with the pSCT.
     This class should be used as the environment class for training 
     an agent to align the pSCT mirrors.
+
+    This iteration of the environment holds a current panel, and 
+    moves to the next panel every frame. The agent can only move the
+    selected panel at any given time step. Basically only one panel
+    moves every frame.
 """
 class pSCT_environment(gym.Env):
 
     def __init__(self,
-                 n_panels = 2,
-                 memory_time = 1):
+                 n_panels = 1,
+                 memory_time = 1, # the amount of frames in the past the agent is allowed to see
+                 episode_length = 512 # the maximum amount of time the agent is allowed to move for
+                 ):
         
         # bookkeeping
         self.step_count = 0
-        self.max_steps = 512 # the maximum amount of time the agent is allowed to move for
+        self.max_steps = episode_length
         self.prev_cost = 0
         
         # panels
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
         self.n_panels = n_panels
-        # discretize the action rotations into self.action_quant amount of discrete values
-        # note that action_quant should be odd so that (action_quant - 1) / 2 maps to rotation = 0 (allow the agent to not move a panel)
-        self.action_quant: int = 25 # if this is 25, then the agent can choose between 25 values to move the panels by. 0 and 25 represent maximum motion
-
+        self.current_panel = 0 # the current panel that the agent is controlling. ranges from 0 to (n_panels - 1)
+        
         # the pSCT telescope
         self.telescope = pSCT(n_panels=self.n_panels)
 
         # image information
-        self.memory_time = memory_time # n frames of memory in the cnn
+        self.memory_time = memory_time # n frames of memory in the feature extractor
         self.memory = None # see observation_space for dtype
 
         # Observation: single-channel image, unnormalized.
@@ -42,10 +47,13 @@ class pSCT_environment(gym.Env):
             dtype=np.uint8,
         )
 
-        # Action: (panel choice, rx, ry)
-        # panel choice is a number between 0 and n_panels - 1. 
-        # rx and ry are discretized to 25 unique values.
-        self.action_space = spaces.MultiDiscrete([self.n_panels, self.action_quant, self.action_quant], dtype=np.uint8)
+        # Action: (rx, ry)
+        self.action_space = spaces.Box(
+            low=-1,
+            high=1,
+            shape=(2,),
+            dtype=np.float32,
+        )
     
     # =================================== API ===================================
     
@@ -68,20 +76,16 @@ class pSCT_environment(gym.Env):
         info (dict):                                                    contains debugging information
     """
     def step(self, action):
-        # normalize actions given by the network. map [0, action_quant] -> [-1, 1]
-        rotation_x = action[1] - ((self.action_quant - 1) / 2)          # action values surround zero
-        rotation_x = rotation_x * 1.0 / ((self.action_quant - 1) / 2)   # action scaled between -1 and 1
-        rotation_y = action[2] - ((self.action_quant - 1) / 2)          # action values surround zero
-        rotation_y = rotation_y * 1.0 / ((self.action_quant - 1) / 2)   # action scaled between -1 and 1
 
         # rotate the panel
-        self.telescope.rotate_panel(self.P1s[action[0]], rotation_x, rotation_y)
+        self.telescope.rotate_panel(self.current_panel, action[0], action[1])
+        self.current_panel = (self.current_panel + 1) % self.n_panels
 
         # update memory - give the new observation to the memory
         self.increment_memory(self.telescope.get_image(self.P1s[:self.n_panels]))
 
         # calculate reward and reward shaping
-        detected_centroids = image_analyzer.get_centroid_locations(self.memory[0])
+        detected_centroids = image_analyzer.get_centroid_locations(self.memory[0]) # returned coordinates are focal plane coordinates
         cost = self.cost_from_detected_centroids(detected_centroids)
         reward = -cost
         improve = self.prev_cost - cost

@@ -8,7 +8,7 @@ from scipy.ndimage import gaussian_filter, maximum_filter, label, center_of_mass
 """
 class image_analyzer():
     """
-        Gets the image x, y pixel coordinates of any detected centroids
+        Gets the image x, y focal plane coordinates of any detected centroids
     """
     def get_centroid_locations(image):
         pts_uv = image_analyzer._detect_centroids_uv(image)
