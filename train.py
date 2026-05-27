@@ -4,10 +4,11 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
-from Environments.environment import pSCT_environment
+from base_environment import base_env
+from configs.experiments.d05_27_26_onePanelBasicConfig import config
 
 # Check that the model parameters are defined correctly in accordance with SB3
-env = pSCT_environment()
+env = base_env(config["env"])
 
 with warnings.catch_warnings():
     warnings.filterwarnings(
@@ -23,39 +24,21 @@ with warnings.catch_warnings():
 # Train
 if __name__ == "__main__":
     env = make_vec_env(
-        pSCT_environment,
-        n_envs=8,
-        vec_env_cls=SubprocVecEnv, # recommended in the documentation for speeding up training
+        base_env,
+        n_envs=config["n_envs"],
+        vec_env_cls=config["vec_env_cls"], # recommended in the documentation for speeding up training
+        #vec_env_cls=SubprocVecEnv, # recommended in the documentation for speeding up training
+        env_kwargs=config["env"] # might be wrong
     )
     # env = VecNormalize(env, norm_reward=True, norm_obs=False) # normalize the reward so that gradient updates aren't clipped too much
     # ultimately, env wraps VecNormalize, which wraps SupprocVecEnv, which wraps MirrorEnvImageDetect
 
+    ppoConfig = config["train_config"]
     model = PPO(
-        policy="CnnPolicy",
-        env=env,
-        device="cpu",
-        policy_kwargs = dict(
-            net_arch=dict(
-                pi=[256, 256],     # policy MLP
-                vf=[256, 256]            # value MLP
-            ),
-            activation_fn=nn.ReLU,
-        ),
-        learning_rate=1e-4,
-        n_steps=512,
-        batch_size=64,
-        n_epochs=5,
-        gamma=0.99,
-        gae_lambda=0.95,
-        clip_range=0.1,
-        ent_coef=0.001,
-        vf_coef=0.5,
-        max_grad_norm=0.5,
-        verbose=1,
-        normalize_advantage=True,
-        tensorboard_log="./Models/OnePanel/",
+        env = env,
+        **ppoConfig
     )
 
-    model.learn(total_timesteps=100_000)
-    model.save("Models/OnePanel/OnePanelAgent")
+    model.learn(total_timesteps=ppoConfig["total_timesteps"])
+    model.save(ppoConfig["model_save_path"])
     env.close()
