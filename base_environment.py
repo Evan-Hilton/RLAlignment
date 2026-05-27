@@ -119,3 +119,6 @@ class base_env(gym.Env):
     def increment_memory(self, img):
         self.memory[1:] = self.memory[:-1] # shift all frames forward (ignoring first fram and overriding last frame)
         self.memory[0] = img
+
+    def evilGithubdetest():
+        pass
