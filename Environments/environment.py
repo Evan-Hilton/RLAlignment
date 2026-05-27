@@ -78,7 +78,12 @@ class pSCT_environment(gym.Env):
     def step(self, action):
 
         # rotate the panel
-        self.telescope.rotate_panel(self.current_panel, action[0], action[1])
+        self.telescope.rotate_panel(self.P1s[self.current_panel], action[0], action[1])
+        # if the panel gets moved outside the screen, move it back
+        if self.telescope.any_centroid_outside_image():
+            self.telescope.rotate_panel(self.P1s[self.current_panel], -action[0], -action[1])
+
+        # increment current controlling panel
         self.current_panel = (self.current_panel + 1) % self.n_panels
 
         # update memory - give the new observation to the memory
@@ -95,10 +100,7 @@ class pSCT_environment(gym.Env):
         if self.telescope.all_centroids_at_center():
             reward += 10
             terminated = True
-        if self.telescope.any_centroid_outside_image():
-            reward -= 35 # truncation penalty should be 5x-20x worse than average reward (currently at ~-0.4)
-            terminated = True
-        reward -= 0.1 # time penalty. incentivices fast solutions
+        reward -= 0.001 # time penalty. incentivices fast solutions
         self.prev_cost = cost
 
         # bookkeeping
@@ -143,6 +145,7 @@ class pSCT_environment(gym.Env):
         mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
 
         cost = mean_r2
+        cost /= 200 # normalize the cost
         return cost
 
     def increment_memory(self, img):
