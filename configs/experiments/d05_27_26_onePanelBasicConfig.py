@@ -65,5 +65,3 @@ config = {
 
     "total_timesteps": 100_000
 }
-
-x = PPO()
