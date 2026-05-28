@@ -4,9 +4,10 @@ from stable_baselines3 import PPO
 import torch.nn as nn
 
 from configs.telescope.basicTelescopeConfig import telescopeConfig
+from src.environments.basic_image_env import BasicImageEnv
 
 config = {
-    "env": {
+    "env_params": {
         "max_steps": 512,
         "n_panels": 1,
         "memory_time": 1,
@@ -28,6 +29,8 @@ config = {
             dtype=np.float32,
         ),
     },
+
+    "environment": BasicImageEnv,
 
     "train_config": {
         "policy": "CnnPolicy",

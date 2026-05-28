@@ -12,7 +12,7 @@ from src.telescope.image_analyzer import image_analyzer
     enough specificity to actually train an agent, so training
     should only be done with inhereted classes.
 """
-class base_env(gym.Env):
+class BaseEnv(gym.Env):
 
     def __init__(self,
                  env_config=None):
