@@ -18,9 +18,9 @@ class pSCT:
         self.img_size = telescope_config["img_size"]
 
         # centroid creation
-        self.init_scatter_pix = 500.0
-        self.init_rxry_scale = 0.05
-        self.img_fov_pix = 600.0
+        self.init_scatter_pix = telescope_config["init_scatter_pix"]
+        self.init_rxry_scale = telescope_config["init_rxry_scale"]
+        self.img_fov_pix = telescope_config["img_fov_pix"]
         self.M_RxRy_inv = self.load_all_rx_ry_matrices(respfile="PSCT/P1_matrix.yml")
         self.last_detected_fp = None
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]

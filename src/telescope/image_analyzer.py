@@ -6,16 +6,16 @@ from scipy.ndimage import gaussian_filter, maximum_filter, label, center_of_mass
     which define useful tools to analyze images produced
     by the pSCT.
 """
-class image_analyzer():
+class ImageAnalyzer():
     """
         Gets the image x, y focal plane coordinates of any detected centroids
     """
     def get_centroid_locations(image):
-        pts_uv = image_analyzer._detect_centroids_uv(image)
+        pts_uv = ImageAnalyzer._detect_centroids_uv(image)
         if len(pts_uv) == 0:
             return np.zeros((0, 2), float)
 
-        x_fp, y_fp = image_analyzer._uv_to_fp(pts_uv[:, 0], pts_uv[:, 1])
+        x_fp, y_fp = ImageAnalyzer._uv_to_fp(pts_uv[:, 0], pts_uv[:, 1])
         pts_fp = np.vstack([x_fp, y_fp]).T
         return pts_fp
     
@@ -91,7 +91,7 @@ class image_analyzer():
 
         # optional merge close detections
         if pts.shape[0] >= 2 and det_merge_radius_pix > 0:
-            pts = image_analyzer._merge_close_points(pts, det_merge_radius_pix)
+            pts = ImageAnalyzer._merge_close_points(pts, det_merge_radius_pix)
         
         return pts
     

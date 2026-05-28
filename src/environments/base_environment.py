@@ -63,6 +63,6 @@ class BaseEnv(gym.Env):
         self.step_count = 0
         self.telescope.reset()
 
-        observation = self.initialize_observation()
+        observation = self.get_observation()
 
         return observation, {}

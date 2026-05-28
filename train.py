@@ -8,6 +8,7 @@ from configs.experiments.d05_27_26_onePanelBasicImageConfig import config
 
 # Check that the model parameters are defined correctly in accordance with SB3
 env = config["environment"](config["env_params"])
+print("slay queen")
 
 with warnings.catch_warnings():
     warnings.filterwarnings(
