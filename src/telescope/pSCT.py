@@ -9,15 +9,13 @@ class pSCT:
     """
         Default pSCT constructor.
     """
-    def __init__(self,
-                 n_panels=1):
+    def __init__(self, telescope_config):
         
         self.rng = np.random.RandomState(67)
         
         # image information
-        self.center = np.array([1612.2804, 1024.4423])
-        self.img_size = 128
-        self.n_panels = n_panels
+        self.center = telescope_config["center_fp"]
+        self.img_size = telescope_config["img_size"]
 
         # centroid creation
         self.init_scatter_pix = 500.0
@@ -26,6 +24,7 @@ class pSCT:
         self.M_RxRy_inv = self.load_all_rx_ry_matrices(respfile="PSCT/P1_matrix.yml")
         self.last_detected_fp = None
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
+        self.P2s = []
 
         # background noise
         self.bg_level = 6
@@ -33,7 +32,7 @@ class pSCT:
 
         # centroid locations
         self.base_offsets = None
-        self.true_centroids = None # (n_panels, 2)
+        self.true_centroids = None # (total number of panels, 2)
         self.rx_ry = None
 
         # rotation information
@@ -47,11 +46,11 @@ class pSCT:
         The returned image is a numpy array with shape (img_size, img_size).
     """
     def get_image(self, panel_ids):
-        assert len(panel_ids) == self.n_panels
+        n_panels = len(panel_ids)
 
         # initialize the image
         img = np.zeros((self.img_size, self.img_size), float)
-        params = np.zeros((self.n_panels, 6), float)
+        params = np.zeros((n_panels, 6), float)
 
         # set up the paramaters for each centroid
         for i, (x_fp, y_fp) in enumerate(self.true_centroids):
