@@ -4,8 +4,8 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
-from base_environment import base_env
-from configs.experiments.d05_27_26_onePanelBasicConfig import config
+from src.environments.base_environment import base_env
+from configs.experiments.d05_27_26_onePanelBasicImageConfig import config
 
 # Check that the model parameters are defined correctly in accordance with SB3
 env = base_env(config["env"])
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     env = make_vec_env(
         base_env,
         n_envs=config["n_envs"],
-        vec_env_cls=config["vec_env_cls"], # recommended in the documentation for speeding up training
+        vec_env_cls=config["vec_env_cls"],
         #vec_env_cls=SubprocVecEnv, # recommended in the documentation for speeding up training
         env_kwargs=config["env"] # might be wrong
     )
