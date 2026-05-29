@@ -69,5 +69,5 @@ config = {
     "n_training_envs": 8,
 
     "total_timesteps": 100_000,
-    "model_save_path": "runs/05-29-2026_onePanelImageCodeCheck/onePanelImageAgent"
+    "model_save_path": "runs/05-29-2026_onePanelImageCodeCheck/agent"
 }
