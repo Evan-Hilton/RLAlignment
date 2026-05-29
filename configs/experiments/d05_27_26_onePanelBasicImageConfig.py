@@ -66,5 +66,6 @@ config = {
         "_init_setup_model": True
     },
 
-    "total_timesteps": 100_000
+    "total_timesteps": 100_000,
+    "model_save_path": "src/..."
 }

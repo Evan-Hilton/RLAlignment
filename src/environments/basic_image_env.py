@@ -24,8 +24,8 @@ class BasicImageEnv(BaseEnv):
         self.n_panels = env_config["n_panels"]
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
 
-    def initialize_telescope(self):
-        return pSCT(self.env_config["telescope"])
+    def initialize_telescope(self, telescope_config):
+        return pSCT(telescope_config)
 
     """
         Rotates the currently selected panel by some
@@ -57,7 +57,7 @@ class BasicImageEnv(BaseEnv):
     def get_observation(self):
         return self.telescope.get_image(self.P1s[:self.n_panels])
 
-    def compute_reward(self):
+    def get_current_reward(self):
         detected_centroids = ImageAnalyzer.get_centroid_locations(self.current_telescope_image)
         d = detected_centroids - self.telescope.center[None, :]
         mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))

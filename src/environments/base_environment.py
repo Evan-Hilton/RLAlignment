@@ -2,7 +2,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 from src.telescope import pSCT
-from src.telescope.image_analyzer import image_analyzer
+from src.telescope.image_analyzer import ImageAnalyzer
 
 """ 
     Base class implementation of the environment which an RL
@@ -44,7 +44,7 @@ class BaseEnv(gym.Env):
 
         observation = self.get_observation()
 
-        reward = self.compute_reward()
+        reward = self.get_current_reward()
 
         terminated = self.check_terminated()
 
