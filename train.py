@@ -22,12 +22,12 @@ with warnings.catch_warnings():
 
 # Train
 if __name__ == "__main__":
+    kwargs = {"env_config": config["env_params"]}
     env = make_vec_env(
         config["environment"],
-        n_envs=config["n_envs"],
+        n_envs=config["n_training_envs"],
         vec_env_cls=config["vec_env_cls"],
-        #vec_env_cls=SubprocVecEnv, # recommended in the documentation for speeding up training
-        env_kwargs=config["env_params"] # might be wrong
+        env_kwargs=kwargs
     )
     # env = VecNormalize(env, norm_reward=True, norm_obs=False) # normalize the reward so that gradient updates aren't clipped too much
     # ultimately, env wraps VecNormalize, which wraps SupprocVecEnv, which wraps MirrorEnvImageDetect
@@ -38,6 +38,6 @@ if __name__ == "__main__":
         **ppoConfig
     )
 
-    model.learn(total_timesteps=ppoConfig["total_timesteps"])
-    model.save(ppoConfig["model_save_path"])
+    model.learn(total_timesteps=config["total_timesteps"])
+    model.save(config["model_save_path"])
     env.close()

@@ -24,14 +24,14 @@ class pSCT:
         self.M_RxRy_inv = self.load_all_rx_ry_matrices(respfile="src/telescope/P1_matrix.yml")
         self.last_detected_fp = None
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
-        self.P2s = []
+        self.total_panels = len(self.P1s)
 
         # background noise
         self.bg_level = 6
         self.read_noise = 3
 
         # centroid locations
-        self.base_offsets = None
+        self.base_offsets = None # (total number of panels, 2)
         self.true_centroids = None # (total number of panels, 2)
         self.rx_ry = None
 
@@ -53,7 +53,9 @@ class pSCT:
         params = np.zeros((n_panels, 6), float)
 
         # set up the paramaters for each centroid
-        for i, (x_fp, y_fp) in enumerate(self.true_centroids):
+        mask = np.isin(np.asarray(self.P1s), np.asarray(panel_ids))
+        centroids = self.true_centroids[mask]
+        for i, (x_fp, y_fp) in enumerate(centroids):
             u, v = self.fp_to_uv(x_fp, y_fp)
             centerX, centerY = self.fp_to_uv(self.center[0], self.center[1])
             r0 = np.sqrt((u-centerX)**2+(v-centerY)**2)
@@ -75,7 +77,7 @@ class pSCT:
         if img.max() > 0:
             img = 255.0 * img / img.max()
         
-        return img
+        return img.astype(np.uint8)
     
     """
         loops over each gaussian to be added to the image and adds it. This uses the optimized
@@ -150,9 +152,9 @@ class pSCT:
     """
         Randomly misaligns every panel in the telescope
     """
-    def set_random_rotations(self):
-        self.base_offsets = (self.rng.rand(self.n_panels, 2) - 0.5) * self.init_scatter_pix
-        self.rx_ry = (self.rng.rand(self.n_panels, 2) - 0.5) * self.init_rxry_scale # (n_panels, 2)
+    def reset(self):
+        self.base_offsets = (self.rng.rand(self.total_panels, 2) - 0.5) * self.init_scatter_pix
+        self.rx_ry = (self.rng.rand(self.total_panels, 2) - 0.5) * self.init_rxry_scale # (n_panels, 2)
         self.__compute_true_centroids()
 
     """
@@ -161,8 +163,8 @@ class pSCT:
         Everything is computed in focal plane coordinates
     """
     def __compute_true_centroids(self):
-        centroids = np.zeros((self.n_panels, 2), float)
-        for i, panel in enumerate(self.P1s[:self.n_panels]):
+        centroids = np.zeros((self.total_panels, 2), float)
+        for i, panel in enumerate(self.P1s):
             rx, ry = self.rx_ry[i]
             dx, dy = self.calc_dx_dy(rx, ry, self.M_RxRy_inv[panel]) # focal plane coords
             base_xy = self.center + self.base_offsets[i]

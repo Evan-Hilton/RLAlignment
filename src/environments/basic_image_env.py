@@ -16,13 +16,18 @@ from src.telescope.image_analyzer import ImageAnalyzer
 """
 class BasicImageEnv(BaseEnv):
     def __init__(self, env_config):
-        super().__init__(env_config=env_config)
+        super().__init__(env_config["max_steps"], 
+                         env_config["telescope"], 
+                         env_config["observation_space"], 
+                         env_config["action_space"])
 
         self.env_config = env_config
 
         self.current_panel = 0
         self.n_panels = env_config["n_panels"]
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
+
+        self.current_telescope_image = None
 
     def initialize_telescope(self, telescope_config):
         return pSCT(telescope_config)
@@ -55,13 +60,16 @@ class BasicImageEnv(BaseEnv):
         where img_size is specified by the telescope
     """
     def get_observation(self):
-        return self.telescope.get_image(self.P1s[:self.n_panels])
+        self.current_telescope_image = self.telescope.get_image(self.P1s[:self.n_panels])
+        return self.current_telescope_image[None, :, :]
 
     def get_current_reward(self):
         detected_centroids = ImageAnalyzer.get_centroid_locations(self.current_telescope_image)
         d = detected_centroids - self.telescope.center[None, :]
         mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
-        return mean_r2
+
+
+        return -mean_r2 * 0.001
 
     def check_terminated(self):
-        pass
+        return False

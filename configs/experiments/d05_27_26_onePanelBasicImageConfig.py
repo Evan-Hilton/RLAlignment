@@ -1,7 +1,7 @@
-from gymnasium import spaces
 import numpy as np
-from stable_baselines3 import PPO
 import torch.nn as nn
+from gymnasium import spaces
+from stable_baselines3.common.vec_env import SubprocVecEnv
 
 from configs.telescope.basicTelescopeConfig import telescopeConfig
 from src.environments.basic_image_env import BasicImageEnv
@@ -52,7 +52,7 @@ config = {
         "rollout_buffer_kwargs": None,
         "target_kl": None,
         "stats_window_size": 100,
-        "tensorboard_log": "Models/OnePanel/",
+        "tensorboard_log": "runs/05-29-2026_onePanelImageCodeCheck/",
         "policy_kwargs": dict(
             net_arch=dict(
                 pi=[256, 256],     # policy MLP
@@ -65,7 +65,9 @@ config = {
         "device": "cpu",
         "_init_setup_model": True
     },
+    "vec_env_cls": SubprocVecEnv,
+    "n_training_envs": 8,
 
     "total_timesteps": 100_000,
-    "model_save_path": "src/..."
+    "model_save_path": "runs/05-29-2026_onePanelImageCodeCheck/onePanelImageAgent"
 }

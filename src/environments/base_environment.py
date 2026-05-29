@@ -15,17 +15,20 @@ from src.telescope.image_analyzer import ImageAnalyzer
 class BaseEnv(gym.Env):
 
     def __init__(self,
-                 env_config=None):
+                 max_steps,
+                 telescope_config,
+                 observation_space,
+                 action_space):
         
         # bookkeeping
         self.step_count = 0
-        self.max_steps = env_config["max_steps"]
+        self.max_steps = max_steps
 
-        self.telescope = self.initialize_telescope(env_config["telescope"])
+        self.telescope = self.initialize_telescope(telescope_config)
 
-        self.observation_space = env_config["observation_space"]
+        self.observation_space = observation_space
 
-        self.action_space = env_config["action_space"]
+        self.action_space = action_space
     
     # =================================== API ===================================
     
