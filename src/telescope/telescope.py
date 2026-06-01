@@ -7,6 +7,9 @@ import yaml
     A telescope should be able to:
         - Return an image of how it currently sees a bright, on-axis star
         - Rotate any panel by any amount
+    
+    This is only a base class for telescopes. Only derived
+    classes should be used for simulation.
 """
 class Telescope:
     """
@@ -15,8 +18,6 @@ class Telescope:
     def __init__(self, telescope_config):
         self.img_size = telescope_config["img_size"]
         self.image = np.zeros((self.img_size, self.img_size))
-        self.state = {"image": self.image,
-                      "centroid_locations": None}
 
     """
         panel_ids is just a list of all the ids of the panels you

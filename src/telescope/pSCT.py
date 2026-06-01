@@ -34,11 +34,6 @@ class PSCT_P1(Telescope):
         self.read_noise = telescope_config["read_noise"]
         self.img_fov_pix = telescope_config["img_fov_pix"]
 
-        # update telescope and state
-        self.state["centroid_locations"] = self.true_centroids
-        self.state["base_offsets"] = self.base_offsets
-        self.state["center"] = self.center
-
     """
         Rotates the panel specified by panel_id by an amount in x and y
         directions. rotation_x and rotation_y should be normalized
