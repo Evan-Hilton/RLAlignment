@@ -1,5 +1,6 @@
 import numpy as np
 import yaml
+from scipy.ndimage import gaussian_filter
 
 from src.telescope.telescope import Telescope
 
@@ -91,12 +92,13 @@ class PSCT_P1(Telescope):
         # detector noise and background
         img += self.bg_level
         img += self.rng.normal(scale=self.read_noise, size=img.shape)
+        #img = gaussian_filter(img, sigma=1)
         
         # normalize to [0,255] (adding background noise might have put values above 255)
         img = img - img.min()
         if img.max() > 0:
             img = 255.0 * img / img.max()
-
+        
         self.image = img
 
     # ========================== Helper Methods ==========================

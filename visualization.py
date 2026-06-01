@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+from stable_baselines3.common.env_util import make_vec_env
 
 from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
 
@@ -19,9 +20,15 @@ background_color = (0, 0, 0) # rgb color; each value ranges from 0-225 inclusive
 env = config["environment"](config["env_params"])
 telescope = env.telescope
 
+kwargs = {"env_config": config["env_params"]}
+env = make_vec_env(
+    config["environment"],
+    n_envs=config["n_training_envs"],
+    vec_env_cls=config["vec_env_cls"],
+    env_kwargs=kwargs
+)
+
 # ----------------------------------------------------- game logic --------------------------------------------------------------
-
-
 
 def main_loop(FRAME): 
    ...
@@ -64,6 +71,10 @@ def render_reward_screen(surface):
     ...
 
 def input_loop(keys, mouse, mouse_pos):
+    if keys[pygame.K_SPACE]:
+        advance()
+
+def advance():
     ...
 
 

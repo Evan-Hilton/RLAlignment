@@ -20,7 +20,8 @@ class BaseEnv(gym.Env):
         self.step_count = 0
         self.max_steps = max_steps
 
-        self.telescope = self.initialize_telescope(telescope_config)
+        self.telescope = None
+        self.initialize_telescope(telescope_config) # should initialize telescope
 
         self.observation_space = observation_space
 

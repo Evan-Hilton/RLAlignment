@@ -11,6 +11,6 @@ telescopeConfig = {
     "action_scale": 0.01,
 
     "bg_level": 6,
-    "read_noise": 3,
+    "read_noise": 11,
     "img_fov_pix": 600.0
 }

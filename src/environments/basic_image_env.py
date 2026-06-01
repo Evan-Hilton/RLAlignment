@@ -16,11 +16,6 @@ from src.telescope.image_analyzer import ImageAnalyzer
 """
 class BasicImageEnv(BaseEnv):
     def __init__(self, env_config):
-        super().__init__(env_config["max_steps"], 
-                         env_config["telescope"], 
-                         env_config["observation_space"], 
-                         env_config["action_space"])
-
         self.env_config = env_config
 
         self.current_panel = 0
@@ -29,8 +24,14 @@ class BasicImageEnv(BaseEnv):
 
         self.detected_centroids = None
 
+        super().__init__(env_config["max_steps"], 
+                         env_config["telescope"], 
+                         env_config["observation_space"], 
+                         env_config["action_space"])
+
     def initialize_telescope(self, telescope_config):
-        return PSCT_P1(telescope_config)
+        self.telescope = PSCT_P1(telescope_config)
+        self.reset_telescope()
     
     def reset_telescope(self):
         self.telescope.reset()
