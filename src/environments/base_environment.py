@@ -1,8 +1,4 @@
-import numpy as np
 import gymnasium as gym
-from gymnasium import spaces
-from src.telescope import pSCT
-from src.telescope.image_analyzer import ImageAnalyzer
 
 """ 
     Base class implementation of the environment which an RL
@@ -43,13 +39,12 @@ class BaseEnv(gym.Env):
     def step(self, action):
         self.apply_action(action)
 
-        self.update_telescope()
-
         observation = self.get_observation()
 
-        reward = self.get_current_reward()
+        reward = self.get_current_reward(observation)
 
-        terminated = self.check_terminated()
+        terminated, termination_reward = self.check_terminated(observation)
+        reward += termination_reward
 
         truncated = self.step_count >= self.max_steps
         self.step_count += 1
@@ -64,7 +59,7 @@ class BaseEnv(gym.Env):
     def reset(self, *, seed=None, options=None):
         # bookkeeping
         self.step_count = 0
-        self.telescope.reset()
+        self.reset_telescope()
 
         observation = self.get_observation()
 

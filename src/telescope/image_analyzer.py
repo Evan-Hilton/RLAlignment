@@ -110,3 +110,29 @@ class ImageAnalyzer():
             used[grp] = True
             keep.append(np.mean(pts[grp], axis=0))
         return np.array(keep, float)
+    
+    """
+        specifies whether the current telescope has all of the centroids at
+        the center of the detected image.
+
+        Returns: true if all the detected centroids are at the center of the screen, false otherwise
+    """
+    def all_centroids_at_center(center, centroid_locations, success_radius=5):
+        # find distance of each centroid to the center
+        d = centroid_locations - center[None, :]
+        r = np.sqrt(np.sum(d**2, axis=1))
+
+        # success if the CLOSEST n_panels detections are all within radius
+        return not bool(np.any(r > success_radius))
+    
+    """
+        specifies whether the current telescope has any of the created centroids
+        outside the detectable area. the center and screen_size are both given
+        in fp coordinates
+        Returns: true if any centroid is outside the image, false otherwise
+    """
+    def any_centroid_outside_image(center, screen_size, centroid_locations):
+        for (fx, fy) in centroid_locations:
+            if ((np.abs(fx - center[0]) > screen_size / 2) or (np.abs(fy - center[1]) > screen_size / 2)):
+                return True
+        return False

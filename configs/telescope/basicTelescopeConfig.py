@@ -8,5 +8,9 @@ telescopeConfig = {
     "init_rxry_scale": 0.05,
     "img_fov_pix": 600.0,
 
-    
+    "action_scale": 0.25,
+
+    "bg_level": 6,
+    "read_noise": 3,
+    "img_fov_pix": 600.0
 }
