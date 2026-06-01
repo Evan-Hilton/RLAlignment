@@ -77,4 +77,5 @@ class BasicImageEnv(BaseEnv):
         return -mean_r2 * 0.001
 
     def check_terminated(self, observation):
-        return ImageAnalyzer.all_centroids_at_center(self.telescope.center, self.detected_centroids, success_radius=5), 1
+        success = ImageAnalyzer.all_centroids_at_center(self.telescope.center, self.detected_centroids, success_radius=5)
+        return success, 10 if success else 0

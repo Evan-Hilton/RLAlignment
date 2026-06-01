@@ -46,7 +46,7 @@ class BaseEnv(gym.Env):
         terminated, termination_reward = self.check_terminated(observation)
         reward += termination_reward
 
-        truncated = self.step_count >= self.max_steps
+        truncated = self.step_count >= self.max_steps - 1
         self.step_count += 1
 
         return observation, reward, terminated, truncated, {}
