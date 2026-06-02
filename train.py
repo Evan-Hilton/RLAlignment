@@ -29,8 +29,6 @@ if __name__ == "__main__":
         vec_env_cls=config["vec_env_cls"],
         env_kwargs=kwargs
     )
-    # env = VecNormalize(env, norm_reward=True, norm_obs=False) # normalize the reward so that gradient updates aren't clipped too much
-    # ultimately, env wraps VecNormalize, which wraps SupprocVecEnv, which wraps MirrorEnvImageDetect
 
     ppoConfig = config["train_config"]
     model = PPO(

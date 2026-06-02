@@ -72,8 +72,8 @@ class PSCT_P1(Telescope):
         mask = np.isin(np.asarray(self.P1s), np.asarray(panel_ids))
         centroids = self.true_centroids[mask]
         for i, (x_fp, y_fp) in enumerate(centroids):
-            u, v = self.__fp_to_uv(x_fp, y_fp)
-            centerX, centerY = self.__fp_to_uv(self.center[0], self.center[1])
+            u, v = self.fp_to_uv(x_fp, y_fp)
+            centerX, centerY = self.fp_to_uv(self.center[0], self.center[1])
             r0 = np.sqrt((u-centerX)**2+(v-centerY)**2)
             params[i][0] = u
             params[i][1] = v
@@ -131,7 +131,7 @@ class PSCT_P1(Telescope):
             respM_yaml = yaml.safe_load(f)
         return respM_yaml
     
-    def __fp_to_uv(self, x_fp, y_fp):
+    def fp_to_uv(self, x_fp, y_fp):
         """focal-plane pixels -> image pixels"""
         half = self.img_fov_pix / 2.0
         dx = x_fp - self.center[0]
@@ -140,7 +140,7 @@ class PSCT_P1(Telescope):
         v = (dy + half) / (2 * half) * (self.img_size - 1)
         return u, v
     
-    def __uv_to_fp(self, u, v):
+    def uv_to_fp(self, u, v):
         """image pixels -> focal-plane pixels"""
         half = self.img_fov_pix / 2.0
         dx = (u / (self.img_size - 1)) * (2 * half) - half

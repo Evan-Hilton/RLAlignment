@@ -55,6 +55,7 @@ class BasicImageEnv(BaseEnv):
         if ImageAnalyzer.any_centroid_outside_image(self.telescope.center, self.telescope.img_fov_pix, self.detected_centroids):
             self.telescope.rotate_panel(self.P1s[self.current_panel], -action[0], -action[1])
             self.update_telescope()
+            print("centroid outside image")
         
         self.current_panel = (self.current_panel + 1) % self.n_panels
 
