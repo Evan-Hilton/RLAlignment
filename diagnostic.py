@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
+from configs.experiments.d06_02_26_twoPanelBasicCNNConfig import config
 
 pygame.init()
 
@@ -84,11 +84,16 @@ def outline_window(main_surface, sub_surface, sub_surface_location, color, name,
     y = sub_surface_location[1] + sub_rect.height + text_rect.height * 0.5
     main_surface.blit(text_surface, (x, y))
 
+prev_keys = None
 def input_loop(keys, mouse, mouse_pos):
-    global done, reward
-    action = (-0.5, 0.5)
-    if keys[pygame.K_SPACE]:
+    global done, reward, prev_keys
+    if keys[pygame.K_SPACE] and not prev_keys[pygame.K_SPACE]:
+        action = (-1, 1)
         advance(action)
+    if keys[pygame.K_b] and not prev_keys[pygame.K_b]:
+        action = (1, -1)
+        advance(action)
+    prev_keys = keys
 
 def advance(action):
     global done

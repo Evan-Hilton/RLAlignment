@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
+from configs.experiments.d06_02_26_twoPanelBasicCNNConfig import config
 
 pygame.init()
 
@@ -13,13 +13,16 @@ WIDTH = 1500 # pixels
 HEIGHT = 900 # pixels
 FRAME = 0
 FRAME_RATE = 60 # frames / second
-background_color = (0, 0, 0)
-graph_color = (210, 240, 210)
+background_color = (0, 0, 0) # black
+graph_color = (210, 240, 210) # nice light green color
+centroid_detection_color1 = (252, 53, 213) # PINK!
+centroid_detection_color2 = (17, 74, 77) # a good dark turqoise
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
+img_scale = 4
 
 def load_model(path, env):
     model = PPO.load(path, env=env)
@@ -42,7 +45,7 @@ def main_loop(FRAME):
     screen is 512x512
 """
 def render_telescope_screen(surface):
-    scaled = np.repeat(np.repeat(telescope.image, 4, axis=0), 4, axis=1)
+    scaled = np.repeat(np.repeat(telescope.image, img_scale, axis=0), img_scale, axis=1)
     pixels = pygame.surfarray.pixels3d(surface)
 
     pixels[:, :, 0] = scaled.T
@@ -50,6 +53,18 @@ def render_telescope_screen(surface):
     pixels[:, :, 2] = scaled.T
 
     del pixels
+    draw_detected_centroids(surface)
+
+"""
+    Adds a little symbol indicating where all of the detected
+    centroids in the image are
+"""
+def draw_detected_centroids(surface):
+    global centroid_detection_color
+    for centroid in env.detected_centroids:
+        x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
+        pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
+        pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
 
 """
     Renders a live view of diagnostics of the agent.
@@ -70,8 +85,9 @@ def render_UI_screen(surface):
     screen is 292x292
 """
 def render_reward_screen(surface, graph_color):
+    surface.fill(background_color)
     global reward
-    if len(reward) == 0 or np.max(reward) - np.min(reward) == 0:
+    if len(reward) < 2 or np.max(reward) - np.min(reward) == 0:
         return
     width, height = surface.get_rect().width, surface.get_rect().height
     graph_y_values = (reward - np.min(reward)) / (np.max(reward) - np.min(reward)) # normalize reward values to 0-1
@@ -87,7 +103,6 @@ def render_reward_screen(surface, graph_color):
     ]
 
     pygame.draw.lines(surface, graph_color, False, points, 2)
-    del graph_y_values
 
 def input_loop(keys, mouse, mouse_pos):
     global done, reward
@@ -100,7 +115,7 @@ def input_loop(keys, mouse, mouse_pos):
     receiving an action and updating the telescope.
 """
 def advance():
-    global done, reward
+    global done, reward, obs
     action, _ = model.predict(obs, deterministic=True)
 
     obs, r, terminated, truncated, _ = env.step(action)
@@ -138,7 +153,7 @@ agent_view =        pygame.Surface((895, 514))  # at 573 , 30
 agent_location = (573, 30)
 ui_view =           pygame.Surface((1112, 292)) # at 30  , 576
 ui_location = (30, 576)
-reward_view =       pygame.Surface((292, 292), graph_color)  # at 1175, 576
+reward_view =       pygame.Surface((292, 292))  # at 1175, 576
 reward_location = (1175, 576)
 
 while run:
@@ -161,7 +176,7 @@ while run:
     render_telescope_screen(telescope_view)
     render_agent_screen(agent_view)
     render_UI_screen(ui_view)
-    render_reward_screen(reward_view)
+    render_reward_screen(reward_view, graph_color)
 
     main_window.blit(telescope_view, telescope_location)
     main_window.blit(agent_view, agent_location)
