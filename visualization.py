@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.d06_02_26_twoPanelMemoryCNNConfig import config
+from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
 
 pygame.init()
 
@@ -73,7 +73,7 @@ def draw_detected_centroids(surface):
 def render_agent_screen(surface):
     if "diagnostic_vis" not in config:
         return
-    config["diagnostic_vis"](surface)
+    config["diagnostic_vis"](surface, env)
 
 """
     Renders buttons and such.

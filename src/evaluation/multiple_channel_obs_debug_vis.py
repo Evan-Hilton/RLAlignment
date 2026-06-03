@@ -1,14 +1,32 @@
-import pygame
+import math
 import numpy as np
+import pygame
 
-def render_agent_diag(surface):
-    # img_scale = 2
-    # scaled = np.repeat(np.repeat(telescope.image, img_scale, axis=0), img_scale, axis=1)
-    # pixels = pygame.surfarray.pixels3d(surface)
+def render_agent_diag(surface, env):
+    render_tiled_images(surface, env.get_observation(), scale=2)
 
-    # pixels[:, :, 0] = scaled.T
-    # pixels[:, :, 1] = scaled.T
-    # pixels[:, :, 2] = scaled.T
+def render_tiled_images(surface, images, scale=4, padding=8):
+    n, H, W = images.shape
 
-    # del pixels
-    ...
+    cols = math.ceil(math.sqrt(n))
+    rows = math.ceil(n / cols)
+
+    for i, img in enumerate(images):
+        row = i // cols
+        col = i % cols
+
+        # Convert grayscale -> RGB
+        rgb = np.repeat(img[:, :, None], 3, axis=2)
+
+        img_surface = pygame.surfarray.make_surface(rgb.swapaxes(0, 1))
+
+        if scale != 1:
+            img_surface = pygame.transform.scale(
+                img_surface,
+                (W * scale, H * scale)
+            )
+
+        x = col * (W * scale + padding)
+        y = row * (H * scale + padding)
+
+        surface.blit(img_surface, (x, y))
