@@ -6,7 +6,8 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
 from configs.experiments.phaseOne.d06_01_26_onePanelBasicImageConfig import config
 
-# Check that the model parameters are defined correctly in accordance with SB3
+# ================ CHECK ENVIRONMENT ================
+
 env = config["environment"](config["env_params"])
 
 with warnings.catch_warnings():
@@ -20,7 +21,8 @@ with warnings.catch_warnings():
     )
     check_env(env, warn=True)
 
-# Train
+# ================ TRAIN MODEL ================
+
 if __name__ == "__main__":
     kwargs = {"env_config": config["env_params"]}
     env = make_vec_env(
