@@ -2,7 +2,7 @@ import yaml
 from pathlib import Path
 import torch.nn as nn
 
-from configs.experiments.d06_01_26_onePanelBasicImageConfig import config as one_panel_config
+from configs.experiments.phaseOne.d06_01_26_onePanelBasicImageConfig import config as one_panel_config
 from src.architectures.configurableCNN import ConfigurableCNN
 
 def load_yaml(path):
@@ -32,5 +32,5 @@ policy_kwargs = dict(
 config = one_panel_config
 config["train_config"]["policy_kwargs"] = policy_kwargs
 config["env_params"]["n_panels"] = 2
-config["train_config"]["tensorboard_log"] = "runs/06-02-twoPanelBasicCNN/"
-config["model_save_path"] = "runs/06-02-twoPanelBasicCNN/agent"
+config["train_config"]["tensorboard_log"] = "runs/phaseOne/06-02-twoPanelBasicCNN/"
+config["model_save_path"] = "runs/phaseOne/06-02-twoPanelBasicCNN/agent"

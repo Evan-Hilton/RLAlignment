@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
+from configs.experiments.phaseOne.d06_01_26_onePanelBasicImageConfig import config
 from src.evaluation.Button import Button
 
 pygame.init()
@@ -69,8 +69,11 @@ def draw_detected_centroids(surface):
     global centroid_detection_color
     for centroid in env.detected_centroids:
         x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
-        pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
-        pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
+        draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
+
+def draw_point_indicator(surface, inside_color, border_color, radius, location):
+    pygame.draw.circle(surface, border_color, location, radius)
+    pygame.draw.circle(surface, inside_color, location, radius - 2)
 
 """
     Renders a live view of diagnostics of the agent.
@@ -125,7 +128,12 @@ def render_reward_screen(surface, graph_color):
 
 def input_loop(keys, mouse, mouse_pos):
     global done, reward
-    if keys[pygame.K_SPACE] and not done:
+    if keys[pygame.K_SPACE]:
+        single_step()
+
+def single_step():
+    global done
+    if not done:
         advance()
 
 """
@@ -173,6 +181,15 @@ buttons = [
         button_inside_color=button_inside_color,
         button_border_color=button_border_color,
         text_color=text_color
+    ),
+
+    Button(
+        rect=(20, 80, 120, 40),
+        text="Step",
+        callback=single_step,
+        button_inside_color=button_inside_color,
+        button_border_color=button_border_color,
+        text_color=text_color
     )
 ]
 
@@ -190,7 +207,6 @@ reward_location = (1175, 576)
 
 while run:
     for event in pygame.event.get():
-        print(event)
         # handle closing the program
         if event.type == pygame.QUIT:
             run = False

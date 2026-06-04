@@ -52,7 +52,7 @@ config = {
         "rollout_buffer_kwargs": None,
         "target_kl": None,
         "stats_window_size": 100,
-        "tensorboard_log": "runs/06-01-2026_onePanelImageCodeCheck/",
+        "tensorboard_log": "runs/phaseOne/06-01-2026_onePanelImageCodeCheck/",
         "policy_kwargs": dict(
             net_arch=dict(
                 pi=[256, 256],     # policy MLP
@@ -69,5 +69,5 @@ config = {
     "n_training_envs": 8,
 
     "total_timesteps": 100_000,
-    "model_save_path": "runs/06-01-2026_onePanelImageCodeCheck/agent"
+    "model_save_path": "runs/phaseOne/06-01-2026_onePanelImageCodeCheck/agent"
 }
