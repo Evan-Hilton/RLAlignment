@@ -3,6 +3,7 @@ import numpy as np
 from stable_baselines3 import PPO
 
 from configs.experiments.d06_01_26_onePanelBasicImageConfig import config
+from src.evaluation.Button import Button
 
 pygame.init()
 
@@ -17,6 +18,11 @@ background_color = (0, 0, 0) # black
 graph_color = (210, 240, 210) # nice light green color
 centroid_detection_color1 = (252, 53, 213) # PINK!
 centroid_detection_color2 = (17, 74, 77) # a good dark turqoise
+text_color = (255, 255, 255) # white
+button_inside_color = centroid_detection_color2
+button_border_color = (255, 255, 255) # white
+
+logo_visible = True # set to True to see logo in corner
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
@@ -80,7 +86,18 @@ def render_agent_screen(surface):
     screen is 1112x292
 """
 def render_UI_screen(surface):
-    ...
+
+    surface.fill(background_color)
+
+    for button in buttons:
+        button.draw(surface, font)
+
+def reset_sim():
+    global obs, reward, done
+    print("test")
+    reward = []
+    obs = env.reset()[0]
+    done = False
 
 """
     Renders the reward vs time graph.
@@ -128,12 +145,12 @@ def advance():
 """
     draws an outline around the window and also labels it
 """
-def outline_window(main_surface, sub_surface, sub_surface_location, color, name, font):
+def outline_window(main_surface, sub_surface, sub_surface_location, name, font):
     sub_rect = sub_surface.get_rect()
-    pygame.draw.rect(main_surface, color, (sub_surface_location[0] - 1, sub_surface_location[1] - 1, sub_rect.width + 2, sub_rect.height + 2), 1)
+    pygame.draw.rect(main_surface, text_color, (sub_surface_location[0] - 1, sub_surface_location[1] - 1, sub_rect.width + 2, sub_rect.height + 2), 1)
 
     # place the label at the bottom middle of the window
-    text_surface = font.render(name, False, color)
+    text_surface = font.render(name, False, text_color)
     text_rect = text_surface.get_rect()
     x = sub_surface_location[0] + sub_rect.width * 0.5 - text_rect.width * 0.5
     y = sub_surface_location[1] + sub_rect.height + text_rect.height * 0.5
@@ -148,6 +165,19 @@ clock = pygame.time.Clock()
 run = True
 font = pygame.font.SysFont('Times New Roman', 15)
 
+buttons = [
+    Button(
+        rect=(20, 20, 120, 40),
+        text="Reset",
+        callback=reset_sim,
+        button_inside_color=button_inside_color,
+        button_border_color=button_border_color,
+        text_color=text_color
+    )
+]
+
+if logo_visible: logo = pygame.image.load("src/evaluation/rosalina.png").convert_alpha()
+
 # sub windows
 telescope_view =    pygame.Surface((512, 512))  # at 30  , 30
 telescope_location = (30, 30)
@@ -160,19 +190,29 @@ reward_location = (1175, 576)
 
 while run:
     for event in pygame.event.get():
+        print(event)
+        # handle closing the program
         if event.type == pygame.QUIT:
-            running = False
+            run = False
+        
+        # handle button clicks
+        for button in buttons:
+            button.handle_event(
+                event,
+                ui_location
+            )
     
     main_loop(FRAME) # the main computation loop
 
     # fill the background with the background color
     main_window.fill(background_color)
+    if logo_visible: main_window.blit(logo, (30, 0))
 
     # draw an outline around every window
-    outline_window(main_window, telescope_view, telescope_location, (255, 255, 255), "telescope view", font)
-    outline_window(main_window, agent_view, agent_location, (255, 255, 255), "agent diagnostics", font)
-    outline_window(main_window, ui_view, ui_location, (255, 255, 255), "ui", font)
-    outline_window(main_window, reward_view, reward_location, (255, 255, 255), "reward vs time", font)
+    outline_window(main_window, telescope_view, telescope_location, "telescope view", font)
+    outline_window(main_window, agent_view, agent_location, "agent diagnostics", font)
+    outline_window(main_window, ui_view, ui_location, "ui", font)
+    outline_window(main_window, reward_view, reward_location, "reward vs time", font)
 
     # render the windows themselves
     render_telescope_screen(telescope_view)
@@ -192,8 +232,5 @@ while run:
     clock.tick(FRAME_RATE) # keeps the game running at a max speed of 'FRAME_RATE' frames/second (might be slower if computations are heavy)
     # this makes sure everything is closed properly when the window is closed
     pygame.display.flip()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
 
 pygame.quit()

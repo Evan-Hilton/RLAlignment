@@ -32,3 +32,5 @@ policy_kwargs = dict(
 config = one_panel_config
 config["train_config"]["policy_kwargs"] = policy_kwargs
 config["env_params"]["n_panels"] = 2
+config["train_config"]["tensorboard_log"] = "runs/06-02-twoPanelBasicCNN/"
+config["model_save_path"] = "runs/06-02-twoPanelBasicCNN/agent"
