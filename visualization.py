@@ -22,7 +22,7 @@ text_color = (255, 255, 255) # white
 button_inside_color = centroid_detection_color2
 button_border_color = (255, 255, 255) # white
 
-logo_visible = False # set to True to see logo in corner
+logo_visible = True # set to True to see logo in corner
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 

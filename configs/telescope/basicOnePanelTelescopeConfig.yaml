@@ -1,0 +1,12 @@
+img_size: 128
+center_fp: [1612.2804, 1024.4423]
+
+n_panels: 1
+
+init_scatter_pix: 500.0
+img_fov_pix: 600.0
+
+action_scale: 0.1
+
+bg_level: 6
+read_noise: 11

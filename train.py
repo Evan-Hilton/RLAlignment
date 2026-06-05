@@ -5,9 +5,11 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
 
-from configs.experiments.phaseOne.d06_01_26_onePanelBasicImageConfig import config
+from configs.loaders.load_config import load_experiment_config
 
 # ================ CHECK ENVIRONMENT ================
+
+config = load_experiment_config("configs/experiments/phaseOne/d06_01_26_onePanelBasicImageConfig.yaml")
 
 env = config["environment"](config["env_params"])
 
