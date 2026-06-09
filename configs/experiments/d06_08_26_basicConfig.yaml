@@ -1,5 +1,5 @@
 environment: BasicImageEnv
-model_save_path: runs/phaseOne/06-09-2026_onePanelImageYAMLCheck/agent
+model_save_path: runs/06-09-2026_onePanelImageYAMLCheck/agent
 total_timesteps: 100000
 
 env_params:
@@ -31,7 +31,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/phaseOne/06-01-2026_onePanelImageYAMLCheck/
+  tensorboard_log: runs/06-01-2026_onePanelImageYAMLCheck/
 
   verbose: 1
   device: cpu

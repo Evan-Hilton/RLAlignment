@@ -2,8 +2,8 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.phaseOne.d06_01_26_onePanelBasicImageConfig import config
 from src.evaluation.Button import Button
+from configs.loaders.load_config import load_experiment_config
 
 pygame.init()
 
@@ -13,7 +13,7 @@ game_name = "agent visualizer" # the name of the window that pops up
 WIDTH = 1500 # pixels
 HEIGHT = 900 # pixels
 FRAME = 0
-FRAME_RATE = 60 # frames / second
+FRAME_RATE = 120 # frames / second
 background_color = (0, 0, 0) # black
 graph_color = (210, 240, 210) # nice light green color
 centroid_detection_color1 = (252, 53, 213) # PINK!
@@ -23,6 +23,8 @@ button_inside_color = centroid_detection_color2
 button_border_color = (255, 255, 255) # white
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
+
+config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -49,6 +51,7 @@ def main_loop(FRAME):
     screen is 512x512
 """
 def render_telescope_screen(surface):
+    env.telescope.update()
     scaled = np.repeat(np.repeat(telescope.image, img_scale, axis=0), img_scale, axis=1)
     pixels = pygame.surfarray.pixels3d(surface)
 
@@ -57,15 +60,16 @@ def render_telescope_screen(surface):
     pixels[:, :, 2] = scaled.T
 
     del pixels
-    draw_detected_centroids(surface)
+    if hasattr(env, "detected_centroids"): draw_centroids(surface, env.detected_centroids)
+    draw_centroids(surface, env.telescope.true_centroids)
 
 """
     Adds a little symbol indicating where all of the detected
     centroids in the image are
 """
-def draw_detected_centroids(surface):
+def draw_centroids(surface, centroids):
     global centroid_detection_color
-    for centroid in env.detected_centroids:
+    for centroid in centroids:
         x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
         draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
 
@@ -144,6 +148,7 @@ def advance():
 
     obs, r, terminated, truncated, _ = env.step(action)
     reward.append(r)
+    print(r)
 
     done = terminated or truncated
 

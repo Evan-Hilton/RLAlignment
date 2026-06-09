@@ -4,6 +4,7 @@ from stable_baselines3 import PPO
 
 from src.telescope.pSCT_P12 import PSCT_P12
 from src.telescope.image_analyzer import ImageAnalyzer
+from src.environments.no_image_psctp12_env import NoImagePSCTP12Env
 
 pygame.init()
 
@@ -48,8 +49,11 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-telescope = PSCT_P12("configs/telescopes/basicMultiPanelP12Config.yaml")
-telescope.reset()
+env = NoImagePSCTP12Env({
+    "max_steps": 512,
+    "telescope": "configs/telescopes/basicMultiPanelP12Config.yaml"
+})
+env.telescope.reset()
 img_scale = 4
 det_cet = None
 
@@ -57,7 +61,8 @@ det_cet = None
 
 def main_loop(FRAME): 
    global det_cet
-   det_cet = ImageAnalyzer._simple_detection(telescope.image, dict())
+   det_cet = ImageAnalyzer._simple_detection(env.telescope.image, dict())
+   print(env.get_current_reward(env.telescope.true_centroids))
 
 """
     Renders the current live view of what the telescope sees.
@@ -66,7 +71,7 @@ def main_loop(FRAME):
     screen is 512x512
 """
 def render_telescope_screen(surface):
-    scaled = np.repeat(np.repeat(telescope.image, img_scale, axis=0), img_scale, axis=1)
+    scaled = np.repeat(np.repeat(env.telescope.image, img_scale, axis=0), img_scale, axis=1)
     pixels = pygame.surfarray.pixels3d(surface)
 
     pixels[:, :, 0] = scaled.T
@@ -114,26 +119,26 @@ def input_loop(keys, mouse, mouse_pos):
     global done, reward, prev_keys
     if keys[pygame.K_LEFT]:
         action = (0, 1)
-        telescope.rotate_panel(1111, [action[0], action[1]])
-        telescope.update()
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        env.telescope.update()
     if keys[pygame.K_RIGHT]:
         action = (0, -1)
-        telescope.rotate_panel(1111, [action[0], action[1]])
-        telescope.update()
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        env.telescope.update()
     if keys[pygame.K_UP]:
         action = (1, 0)
-        telescope.rotate_panel(1111, [action[0], action[1]])
-        telescope.update()
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        env.telescope.update()
     if keys[pygame.K_DOWN]:
         action = (-1, 0)
-        telescope.rotate_panel(1111, [action[0], action[1]])
-        telescope.update()
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        env.telescope.update()
     prev_keys = keys
     if keys[pygame.K_y]:
-        telescope.reset()
+        env.telescope.reset()
     if keys[pygame.K_l]:
-        telescope.true_centroids[0] = telescope.center
-        telescope.update()
+        env.telescope.true_centroids[0] = env.telescope.center
+        env.telescope.update()
 
 def advance(action):
     global done

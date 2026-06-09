@@ -9,7 +9,7 @@ from configs.loaders.load_config import load_experiment_config
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d06_08_26_basicConfig.yaml")
+config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 
 env = config["environment"](config["env_params"])
 

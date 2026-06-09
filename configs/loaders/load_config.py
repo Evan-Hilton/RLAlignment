@@ -4,10 +4,12 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 import torch.nn as nn
 
 from src.environments.basic_image_env import *
+from src.environments.no_image_psctp12_env import *
 from src.architectures.configurableCNN import *
 
 ENVIRONMENTS = {
     "BasicImageEnv": BasicImageEnv,
+    "NoImagePSCTP12Env": NoImagePSCTP12Env
 }
 FEATURE_EXTRACTORS = {
     "ConfigurableCNN": ConfigurableCNN
