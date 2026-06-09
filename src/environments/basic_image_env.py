@@ -2,7 +2,7 @@ import numpy as np
 from gymnasium import spaces
 
 from src.environments.base_environment import BaseEnv
-from telescope.pSCT_P1 import PSCT_P1
+from src.telescope.pSCT_P1 import PSCT_P1
 from src.telescope.image_analyzer import ImageAnalyzer
 
 """

@@ -27,7 +27,7 @@ class PSCT_P1(Telescope):
         # rotation information
         self.action_scale = telescope_config["action_scale"]
         self.action_noise_scale = telescope_config["action_noise_scale"]
-        self.M_RxRy_inv = self.__load_all_rx_ry_matrices(respfile="src/telescope/P1_matrix.yml")
+        self.M_RxRy_inv = self.__load_all_rx_ry_matrices(respfile="src/telescope/P1_matrix.yaml")
         self.tube_dragging_scale = telescope_config["tube_dragging_scale"]
 
         # initial randomization information
