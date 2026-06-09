@@ -19,6 +19,7 @@ class Telescope:
         self.config = telescope_config
         self.img_size = telescope_config["img_size"]
         self.image = np.zeros((self.img_size, self.img_size))
+        self.centroid_flux_max = telescope_config["centroid_flux_max"]
 
         # for image generation
         self.Y, self.X = np.mgrid[
@@ -30,7 +31,7 @@ class Telescope:
         panel_ids is just a list of all the ids of the panels you
         want to rotate
     """
-    def rotate_panels(self, panel_ids):
+    def rotate_panel(self, panel_id: int, rotation):
         raise NotImplementedError
 
     """
@@ -51,16 +52,12 @@ class Telescope:
             self.image = self.create_gaussian_image(img_centroid_locations)
         elif centroid_type == "poly":
             self.image = self.create_poly_image(img_centroid_locations)
-        self.normalize_image()
     
     """
-        re-puts the image scale to be between 0-255
+        if any pixel values are outside 0, 255, they are clipped
     """
-    def normalize_image(self):
-        img = self.image - self.image.min()
-        if img.max() > 0:
-            img = 255.0 * img / img.max()
-        self.image = img
+    def clip_image(self):
+        self.image = np.clip(self.image, 0, 255)
     
     """
         creates a new image which contains all centroids represented by gaussian
@@ -112,7 +109,7 @@ class Telescope:
                 )
             )
 
-            image[ymin:ymax, xmin:xmax] += patch
+            image[ymin:ymax, xmin:xmax] += patch * self.centroid_flux_max
         
         return image
 
@@ -177,7 +174,7 @@ class Telescope:
 
             patch[mask] = (1.0 - r_e2[mask])**2
 
-            image[ymin:ymax, xmin:xmax] += patch
+            image[ymin:ymax, xmin:xmax] += patch * self.centroid_flux_max
 
         return image
 

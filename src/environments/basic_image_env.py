@@ -2,7 +2,7 @@ import numpy as np
 from gymnasium import spaces
 
 from src.environments.base_environment import BaseEnv
-from src.telescope.pSCT import PSCT_P1
+from telescope.pSCT_P1 import PSCT_P1
 from src.telescope.image_analyzer import ImageAnalyzer
 
 """
@@ -60,12 +60,12 @@ class BasicImageEnv(BaseEnv):
         the centroids to move outside the field of view
     """
     def apply_action(self, action):
-        self.telescope.rotate_panel(self.P1s[self.current_panel], action[0], action[1])
+        self.telescope.rotate_panel(self.P1s[self.current_panel], [action[0], action[1]])
 
         self.update_telescope()
 
         if ImageAnalyzer.any_centroid_outside_image(self.telescope.center, self.telescope.init_scatter_pix, self.detected_centroids):
-            self.telescope.rotate_panel(self.P1s[self.current_panel], -action[0], -action[1])
+            self.telescope.rotate_panel(self.P1s[self.current_panel], [-action[0], -action[1]])
             self.update_telescope()
         
         self.current_panel = (self.current_panel + 1) % self.telescope.n_panels

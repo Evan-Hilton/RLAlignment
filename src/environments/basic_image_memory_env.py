@@ -1,7 +1,7 @@
 import numpy as np
 
 from src.environments.basic_image_env import BasicImageEnv
-from src.telescope.pSCT import PSCT_P1
+from telescope.pSCT_P1 import PSCT_P1
 from src.telescope.image_analyzer import ImageAnalyzer
 
 """

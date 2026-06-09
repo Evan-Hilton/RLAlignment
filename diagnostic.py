@@ -2,8 +2,8 @@ import pygame
 import numpy as np
 from stable_baselines3 import PPO
 
-from configs.experiments.phaseTwo.d06_04_26_16PanelBasicImageConfig import config
-from src.telescope.pSCT import PSCT_P1
+from src.telescope.pSCT_P12 import PSCT_P12
+from src.telescope.image_analyzer import ImageAnalyzer
 
 pygame.init()
 
@@ -27,33 +27,37 @@ centroid_detection_color2 = (17, 74, 77)
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
 #env = config["environment"](config["env_params"])
-telescope = PSCT_P1({
-    "img_size": 128,
+# telescope = PSCT_P1({
+#     "img_size": 128,
 
-    "sigma_r_center": 0.75,
-    "sigma_r_max": 3.85,
-    "sigma_theta_center": 0.75,
-    "sigma_theta_max": 0.9,
+#     "sigma_r_center": 0.75,
+#     "sigma_r_max": 3.85,
+#     "sigma_theta_center": 0.75,
+#     "sigma_theta_max": 0.9,
+#     "centroid_type": "gaussian",
 
-    "n_panels": 2,
-    "center_fp": np.array([1612.2804, 1024.4423]),
+#     "n_panels": 2,
+#     "center_fp": np.array([1612.2804, 1024.4423]),
 
-    "init_scatter_pix": 500.0,
-    "init_rxry_scale": 0.05,
-    "img_fov_pix": 600.0,
+#     "init_scatter_pix": 500.0,
+#     "init_rxry_scale": 0.05,
+#     "img_fov_pix": 600.0,
 
-    "action_scale": 0.1,
+#     "action_scale": 0.1,
 
-    "bg_level": 6,
-    "read_noise": 11
-})
+#     "bg_level": 6,
+#     "read_noise": 11
+# })
+telescope = PSCT_P12("configs/telescopes/basicMultiPanelP12Config.yaml")
 telescope.reset()
 img_scale = 4
+det_cet = None
 
 # ----------------------------------------------------- game logic --------------------------------------------------------------
 
 def main_loop(FRAME): 
-   ...
+   global det_cet
+   det_cet = ImageAnalyzer._simple_detection(telescope.image, dict())
 
 """
     Renders the current live view of what the telescope sees.
@@ -78,12 +82,11 @@ def render_telescope_screen(surface):
     centroids in the image are
 """
 def draw_detected_centroids(surface):
-    pass
-    # global centroid_detection_color
-    # for centroid in env.detected_centroids:
-    #     x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
-    #     pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
-    #     pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
+    global centroid_detection_color
+    for ID in det_cet['ID'].tolist():
+        x, y = det_cet['X_IMAGE'][ID], det_cet['Y_IMAGE'][ID]
+        pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
+        pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
 
 """
     Renders buttons and such.
@@ -109,12 +112,22 @@ def outline_window(main_surface, sub_surface, sub_surface_location, color, name,
 prev_keys = None
 def input_loop(keys, mouse, mouse_pos):
     global done, reward, prev_keys
-    if keys[pygame.K_SPACE]:
-        action = (-1, 1)
-        advance(action)
-    if keys[pygame.K_b]:
-        action = (1, -1)
-        advance(action)
+    if keys[pygame.K_LEFT]:
+        action = (0, 1)
+        telescope.rotate_panel(1111, [action[0], action[1]])
+        telescope.update()
+    if keys[pygame.K_RIGHT]:
+        action = (0, -1)
+        telescope.rotate_panel(1111, [action[0], action[1]])
+        telescope.update()
+    if keys[pygame.K_UP]:
+        action = (1, 0)
+        telescope.rotate_panel(1111, [action[0], action[1]])
+        telescope.update()
+    if keys[pygame.K_DOWN]:
+        action = (-1, 0)
+        telescope.rotate_panel(1111, [action[0], action[1]])
+        telescope.update()
     prev_keys = keys
     if keys[pygame.K_y]:
         telescope.reset()
