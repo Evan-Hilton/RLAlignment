@@ -2,14 +2,16 @@ from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
 import torch
 import torch.nn as nn
+import yaml
 
 class ConfigurableCNN(BaseFeaturesExtractor):
 
     def __init__(
         self,
         observation_space,
-        cnn_config,
+        config,
     ):
+        cnn_config = self.load_yaml(config)
 
         super().__init__(
             observation_space,
@@ -54,6 +56,10 @@ class ConfigurableCNN(BaseFeaturesExtractor):
             ),
             nn.ReLU()
         )
+    
+    def load_yaml(self, path):
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
 
     def forward(self, observations):
 

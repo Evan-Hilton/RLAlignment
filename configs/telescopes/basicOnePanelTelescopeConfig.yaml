@@ -1,0 +1,25 @@
+# image characteristics
+n_panels: 1
+img_size: 128
+center_fp: [1612.2804, 1024.4423]
+img_fov_pix: 600.0
+
+# centroid characteristics
+# the width/height of the centroids are linear with respect to distance from the center
+# the max values are defined to be how wide the distribution is when the centroid is img_size/2 pixels away from center
+sigma_r_center: 0.75
+sigma_r_max: 3.85
+sigma_theta_center: 0.75
+sigma_theta_max: 0.9
+centroid_type: poly
+
+# centroid initial characteristics
+init_scatter_pix: 500.0
+init_rxry_scale: 0.05
+
+# panel rotation scale
+action_scale: 0.1
+
+# image noise
+bg_level: 6
+read_noise: 11

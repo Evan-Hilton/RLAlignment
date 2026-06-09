@@ -1,4 +1,5 @@
 import numpy as np
+from gymnasium import spaces
 
 from src.environments.base_environment import BaseEnv
 from src.telescope.pSCT import PSCT_P1
@@ -19,15 +20,26 @@ class BasicImageEnv(BaseEnv):
         self.env_config = env_config
 
         self.current_panel = 0
-        self.n_panels = env_config["n_panels"]
         self.P1s = [1111, 1112, 1113, 1114, 1211, 1212, 1213, 1214, 1311, 1312, 1313, 1314, 1411, 1412, 1413, 1414]
-
         self.detected_centroids = None
+        self.initialize_telescope(env_config["telescope"])
 
         super().__init__(env_config["max_steps"], 
-                         env_config["telescope"], 
-                         env_config["observation_space"], 
-                         env_config["action_space"])
+                         spaces.Box( # observation space
+                            low=0,
+                            high=255,
+                            shape=(1, # same as memory time
+                                    self.telescope.img_size, 
+                                    self.telescope.img_size),  # CHW for SB3 CNN
+                            dtype=np.uint8,
+                        ),
+                         spaces.Box(
+                            low=-1,
+                            high=1,
+                            shape=(2,),
+                            dtype=np.float32,
+                        )
+        )
 
     def initialize_telescope(self, telescope_config):
         self.telescope = PSCT_P1(telescope_config)
@@ -56,10 +68,10 @@ class BasicImageEnv(BaseEnv):
             self.telescope.rotate_panel(self.P1s[self.current_panel], -action[0], -action[1])
             self.update_telescope()
         
-        self.current_panel = (self.current_panel + 1) % self.n_panels
+        self.current_panel = (self.current_panel + 1) % self.telescope.n_panels
 
     def update_telescope(self):
-        self.telescope.update(self.P1s[:self.n_panels])
+        self.telescope.update(self.P1s[:self.telescope.n_panels])
         self.detected_centroids = ImageAnalyzer.get_centroid_locations(self.telescope.image)
 
     """

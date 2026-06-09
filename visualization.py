@@ -22,8 +22,6 @@ text_color = (255, 255, 255) # white
 button_inside_color = centroid_detection_color2
 button_border_color = (255, 255, 255) # white
 
-logo_visible = True # set to True to see logo in corner
-
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
 env = config["environment"](config["env_params"])
@@ -97,7 +95,6 @@ def render_UI_screen(surface):
 
 def reset_sim():
     global obs, reward, done
-    print("test")
     reward = []
     obs = env.reset()[0]
     done = False
@@ -172,6 +169,7 @@ pygame.display.set_caption(game_name)
 clock = pygame.time.Clock()
 run = True
 font = pygame.font.SysFont('Times New Roman', 15)
+logo_visible = False # set to True to see logo in corner
 
 buttons = [
     Button(

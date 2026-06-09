@@ -37,8 +37,6 @@ class Button:
         if event.type != pygame.MOUSEBUTTONDOWN:
             return
 
-        print("mouse down")
-
         if event.button != 1:
             return
 
@@ -47,11 +45,5 @@ class Button:
             event.pos[1] - parent_surface_location[1]
         )
 
-        print("local mouse:", local_mouse)
-        print("button rect:", self.rect)
-
         if self.rect.collidepoint(local_mouse):
-
-            print("button clicked")
-
             self.callback()

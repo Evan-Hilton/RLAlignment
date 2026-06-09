@@ -3,7 +3,7 @@ import torch.nn as nn
 from gymnasium import spaces
 from stable_baselines3.common.vec_env import SubprocVecEnv
 
-from configs.telescope.basicTelescopeConfig import telescopeConfig
+from configs.telescopes.basicTelescopeConfig import telescopeConfig
 from src.environments.basic_image_env import BasicImageEnv
 
 config = {

@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter, maximum_filter, label, center_of_mass
+import pandas as pd
+from scipy import ndimage as ndi
 
 """
     This class acts as a collection of static methods
@@ -7,6 +9,19 @@ from scipy.ndimage import gaussian_filter, maximum_filter, label, center_of_mass
     by the pSCT.
 """
 class ImageAnalyzer():
+    SEW_COLUMNS = [
+        "X_IMAGE",
+        "Y_IMAGE",
+        "FLUX_ISO",
+        "FLUX_MAX",
+        "BACKGROUND",
+        "A_IMAGE",
+        "B_IMAGE",
+        "THETA_IMAGE",
+        "FLAGS",
+    ]
+    CATALOG_COLUMNS = ["ID", *SEW_COLUMNS]
+
     """
         Gets the image x, y focal plane coordinates of any detected centroids
     """
@@ -136,3 +151,48 @@ class ImageAnalyzer():
             if ((np.abs(fx - center[0]) > screen_size / 2) or (np.abs(fy - center[1]) > screen_size / 2)):
                 return True
         return False
+    
+    """
+        centroid detector pulled from: "https://github.com/qi-feng/focal_plane_refactor/blob/main/src/focal_plane_refactor/detect.py"
+    """
+    def _simple_detection(image: np.ndarray, cfg: dict | None = None) -> pd.DataFrame:
+        cfg = cfg or {}
+        sigma = float(cfg.get("gaussian_sigma", 1.2))
+        pct = float(cfg.get("percentile_threshold", 99.8))
+        nsig = float(cfg.get("sigma_threshold", 5.0))
+        opening_size = int(cfg.get("opening_size", 2))
+
+        smooth = ndi.gaussian_filter(image.astype(float), sigma=sigma)
+        threshold = max(np.percentile(smooth, pct), np.median(smooth) + nsig * np.std(smooth))
+        mask = ndi.binary_opening(smooth > threshold, structure=np.ones((opening_size, opening_size)))
+        labels, nlab = ndi.label(mask)
+
+        rows = []
+        for lab in range(1, nlab + 1):
+            ys, xs = np.where(labels == lab)
+            if len(xs) < int(cfg.get("min_pixels", 2)):
+                continue
+
+            vals = image[ys, xs].astype(float)
+            flux = float(vals.sum())
+            if flux <= 0:
+                continue
+
+            x0 = float((xs * vals).sum() / flux)
+            y0 = float((ys * vals).sum() / flux)
+            rows.append(
+                {
+                    "ID": len(rows),
+                    "X_IMAGE": x0,
+                    "Y_IMAGE": y0,
+                    "FLUX_ISO": flux,
+                    "FLUX_MAX": float(vals.max()),
+                    "BACKGROUND": float(np.median(image)),
+                    "A_IMAGE": float(max(np.std(xs), 1.0)),
+                    "B_IMAGE": float(max(np.std(ys), 1.0)),
+                    "THETA_IMAGE": 0.0,
+                    "FLAGS": 0,
+                }
+            )
+
+        return pd.DataFrame(rows, columns=ImageAnalyzer.CATALOG_COLUMNS)

@@ -3,6 +3,7 @@ import numpy as np
 from stable_baselines3 import PPO
 
 from configs.experiments.phaseTwo.d06_04_26_16PanelBasicImageConfig import config
+from src.telescope.pSCT import PSCT_P1
 
 pygame.init()
 
@@ -25,8 +26,28 @@ centroid_detection_color2 = (17, 74, 77)
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
-env = config["environment"](config["env_params"])
-telescope = env.telescope
+#env = config["environment"](config["env_params"])
+telescope = PSCT_P1({
+    "img_size": 128,
+
+    "sigma_r_center": 0.75,
+    "sigma_r_max": 3.85,
+    "sigma_theta_center": 0.75,
+    "sigma_theta_max": 0.9,
+
+    "n_panels": 2,
+    "center_fp": np.array([1612.2804, 1024.4423]),
+
+    "init_scatter_pix": 500.0,
+    "init_rxry_scale": 0.05,
+    "img_fov_pix": 600.0,
+
+    "action_scale": 0.1,
+
+    "bg_level": 6,
+    "read_noise": 11
+})
+telescope.reset()
 img_scale = 4
 
 # ----------------------------------------------------- game logic --------------------------------------------------------------
@@ -57,11 +78,12 @@ def render_telescope_screen(surface):
     centroids in the image are
 """
 def draw_detected_centroids(surface):
-    global centroid_detection_color
-    for centroid in env.detected_centroids:
-        x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
-        pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
-        pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
+    pass
+    # global centroid_detection_color
+    # for centroid in env.detected_centroids:
+    #     x, y = env.telescope.fp_to_uv(centroid[0], centroid[1])
+    #     pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
+    #     pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
 
 """
     Renders buttons and such.
@@ -94,6 +116,11 @@ def input_loop(keys, mouse, mouse_pos):
         action = (1, -1)
         advance(action)
     prev_keys = keys
+    if keys[pygame.K_y]:
+        telescope.reset()
+    if keys[pygame.K_l]:
+        telescope.true_centroids[0] = telescope.center
+        telescope.update()
 
 def advance(action):
     global done
