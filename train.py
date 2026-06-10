@@ -9,7 +9,7 @@ from configs.loaders.load_config import load_experiment_config
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d06_09_26_noImageOneCentroidObs.yaml")
+config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
 
 env = config["environment"](config["env_params"])
 

@@ -1,10 +1,10 @@
-environment: NoImageOneCentroidObs
-model_save_path: runs/06-09-2026-multPanelNoImageOneCentroidObs/agent8
-total_timesteps: 300000
+environment: NoImagePSCTP12Env
+model_save_path: runs/06-10-2026-tubeDragging0.1MultPanelP12/agent3
+total_timesteps: 700000
 
 env_params:
   max_steps: 512
-  telescope: configs/telescopes/basicMultiPanelP12Config.yaml
+  telescope: configs/telescopes/tubeDragging0.1MultPanelP12Config.yaml
 
 n_training_envs: 8
 vec_env_cls: SubprocVecEnv
@@ -29,7 +29,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/06-09-2026-multPanelNoImageOneCentroidObs/
+  tensorboard_log: runs/06-10-2026-tubeDragging0.1MultPanelP12/
 
   verbose: 1
   device: cpu

@@ -119,19 +119,19 @@ def input_loop(keys, mouse, mouse_pos):
     global done, reward, prev_keys
     if keys[pygame.K_LEFT]:
         action = (1, 0)
-        env.telescope.rotate_panel(1121, [action[0], action[1]])
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_RIGHT]:
         action = (-1, 0)
-        env.telescope.rotate_panel(1121, [action[0], action[1]])
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_UP]:
         action = (0, -1)
-        env.telescope.rotate_panel(1121, [action[0], action[1]])
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_DOWN]:
         action = (0, 1)
-        env.telescope.rotate_panel(1121, [action[0], action[1]])
+        env.telescope.rotate_panel(1111, [action[0], action[1]])
         env.telescope.update()
     prev_keys = keys
     if keys[pygame.K_y]:

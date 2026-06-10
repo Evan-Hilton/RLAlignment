@@ -24,7 +24,7 @@ button_border_color = (255, 255, 255) # white
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
-config = load_experiment_config("configs/experiments/d06_09_26_noImageOneCentroidObs.yaml")
+config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -61,7 +61,7 @@ def render_telescope_screen(surface):
 
     del pixels
     if hasattr(env, "detected_centroids"): draw_centroids(surface, env.detected_centroids)
-    draw_centroids(surface, env.telescope.true_centroids)
+    else: draw_centroids(surface, env.telescope.true_centroids)
 
 """
     Adds a little symbol indicating where all of the detected
