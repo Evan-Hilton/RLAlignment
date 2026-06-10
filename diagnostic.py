@@ -62,7 +62,7 @@ det_cet = None
 def main_loop(FRAME): 
    global det_cet
    det_cet = ImageAnalyzer._simple_detection(env.telescope.image, dict())
-   print(env.get_current_reward(env.telescope.true_centroids))
+   #print(env.get_current_reward(env.telescope.true_centroids))
 
 """
     Renders the current live view of what the telescope sees.
@@ -118,20 +118,20 @@ prev_keys = None
 def input_loop(keys, mouse, mouse_pos):
     global done, reward, prev_keys
     if keys[pygame.K_LEFT]:
-        action = (0, 1)
-        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        action = (1, 0)
+        env.telescope.rotate_panel(1121, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_RIGHT]:
-        action = (0, -1)
-        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        action = (-1, 0)
+        env.telescope.rotate_panel(1121, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_UP]:
-        action = (1, 0)
-        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        action = (0, -1)
+        env.telescope.rotate_panel(1121, [action[0], action[1]])
         env.telescope.update()
     if keys[pygame.K_DOWN]:
-        action = (-1, 0)
-        env.telescope.rotate_panel(1111, [action[0], action[1]])
+        action = (0, 1)
+        env.telescope.rotate_panel(1121, [action[0], action[1]])
         env.telescope.update()
     prev_keys = keys
     if keys[pygame.K_y]:

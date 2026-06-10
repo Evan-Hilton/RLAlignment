@@ -24,7 +24,7 @@ button_border_color = (255, 255, 255) # white
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
-config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
+config = load_experiment_config("configs/experiments/d06_09_26_noImageOneCentroidObs.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -148,7 +148,6 @@ def advance():
 
     obs, r, terminated, truncated, _ = env.step(action)
     reward.append(r)
-    print(r)
 
     done = terminated or truncated
 

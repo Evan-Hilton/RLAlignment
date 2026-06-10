@@ -26,21 +26,31 @@ with warnings.catch_warnings():
 
 # ================ TRAIN MODEL ================
 
-if __name__ == "__main__":
-    kwargs = {"env_config": config["env_params"]}
+def train_model(model_config):
+    kwargs = {"env_config": model_config["env_params"]}
     env = make_vec_env(
-        config["environment"],
-        n_envs=config["n_training_envs"],
-        vec_env_cls=config["vec_env_cls"],
+        model_config["environment"],
+        n_envs=model_config["n_training_envs"],
+        vec_env_cls=model_config["vec_env_cls"],
         env_kwargs=kwargs
     )
 
-    ppoConfig = config["train_config"]
+    ppoConfig = model_config["train_config"]
     model = PPO(
         env = env,
         **ppoConfig
     )
 
-    model.learn(total_timesteps=config["total_timesteps"])
-    model.save(config["model_save_path"])
+    model.learn(total_timesteps=model_config["total_timesteps"])
+    model.save(model_config["model_save_path"])
     env.close()
+
+if __name__ == "__main__":
+    for i in range(48):
+        if i > 7 and i % 8 == 0:
+            config["total_timesteps"] = 200_000 * i
+            config["model_save_path"] = config["model_save_path"][:-1] + str(i)
+            config["env_params"]["telescope"] = "configs/telescopes/basicMultiPanelP12Config" + str(i) + ".yaml"
+            print("training " + str(i) + " panels model")
+            print(config["total_timesteps"], config["model_save_path"], config["env_params"]["telescope"])
+            train_model(config)

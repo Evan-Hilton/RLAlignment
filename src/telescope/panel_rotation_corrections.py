@@ -21,17 +21,38 @@ def drag_tubes(primary_panel_id, rotation, effect_strength):
     # if you stand at the center of the mirror ring and look at primary_panel, then left panel is the panel directly to the left, and similarly defined for right
     panel_actions = {}
 
+    # the left and right panel rotations should be the same
     left_panel_rotation = [x * effect_strength for x in rotation] # scale rotation by effect strength
     left_panel_rotation[0] *= -1
     right_panel_rotation = left_panel_rotation
 
+    # panels in the other rings will also have to move the same amount
+    other_ring_rotation = [x * effect_strength for x in rotation]
+    other_ring_rotation[1] *= -1
+
     primary_in_P1 = primary_panel_id in P1s
     if primary_in_P1:
-        left_panel_id = P1s[(P1s.index(primary_panel_id) - 1) % len(P1s)]
-        right_panel_id = P1s[(P1s.index(primary_panel_id) + 1) % len(P1s)]
+        # look at panels left and right of the primary panel
+        P1_panel_index = P1s.index(primary_panel_id)
+        left_panel_id = P1s[(P1_panel_index - 1) % len(P1s)]
+        right_panel_id = P1s[(P1_panel_index + 1) % len(P1s)]
+
+        # if the panel is in P1, we have to move two more panels in P2
+        outer_panel_id1 = P2s[P1_panel_index * 2]
+        outer_panel_id2 = P2s[P1_panel_index * 2 + 1]
+
+        panel_actions[outer_panel_id1] = other_ring_rotation
+        panel_actions[outer_panel_id2] = other_ring_rotation
     else: # primary in P2
+        # look at panels left and right of the primary panel
+        P2_panel_index = P2s.index(primary_panel_id)
         left_panel_id = P2s[(P2s.index(primary_panel_id) - 1) % len(P2s)]
         right_panel_id = P2s[(P2s.index(primary_panel_id) + 1) % len(P2s)]
+
+        # if the panel is in P2, we have to move only one other panel in P1
+        inner_panel_id = P1s[int(P2_panel_index / 2)]
+
+        panel_actions[inner_panel_id] = other_ring_rotation
     
     panel_actions[left_panel_id] = left_panel_rotation
     panel_actions[right_panel_id] = right_panel_rotation

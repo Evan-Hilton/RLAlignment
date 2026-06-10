@@ -1,17 +1,17 @@
-environment: NoImagePSCTP12Env
-model_save_path: runs/06-09-2026-multPanelNoImage/agent6
-total_timesteps: 5000000
+environment: NoImageOneCentroidObs
+model_save_path: runs/06-09-2026-multPanelNoImageOneCentroidObs/agent16
+total_timesteps: 300000
 
 env_params:
   max_steps: 512
-  telescope: configs/telescopes/basicMultiPanelP12Config.yaml
+  telescope: configs/telescopes/basicMultiPanelP12Config16.yaml
 
 n_training_envs: 8
 vec_env_cls: SubprocVecEnv
 
 network:
-  pi: [256, 256, 256]
-  vf: [256, 256, 256]
+  pi: [256, 256, 128]
+  vf: [256, 256, 128]
 
 train_config:
   policy: MlpPolicy
@@ -29,7 +29,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/06-09-2026-multPanelNoImage/
+  tensorboard_log: runs/06-09-2026-multPanelNoImageOneCentroidObs/
 
   verbose: 1
   device: cpu

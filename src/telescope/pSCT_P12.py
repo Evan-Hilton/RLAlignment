@@ -45,6 +45,8 @@ class PSCT_P12(Telescope):
         self.read_noise = telescope_config["read_noise"]
         self.img_fov_pix = telescope_config["img_fov_pix"]
         self.centroid_type = telescope_config["centroid_type"]
+
+        self.reset()
     
     """
         given a path to a telescope config file, it loads the file

@@ -41,7 +41,7 @@ class NoImagePSCTP12Env(BaseEnv):
 
     def get_observation(self):
         panel_index_indicator = self.current_panel * (1 / len(self.telescope.panels)) * 2 - 1
-        return np.append(self.__normalize_centroid_error((self.telescope.true_centroids - self.telescope.center[None, :]).reshape(-1)), panel_index_indicator).astype(np.float32)
+        return np.append(self.normalize_centroid_error((self.telescope.true_centroids - self.telescope.center[None, :]).reshape(-1)), panel_index_indicator).astype(np.float32)
 
     def get_current_reward(self, observation):
         panel_idx = (self.current_panel - 1) % len(self.telescope.panels)
@@ -57,7 +57,7 @@ class NoImagePSCTP12Env(BaseEnv):
         Normalizes a distance given by 'distance' in fp coordinates from a point
         to the center of the telescope to be between 0 (point at center) and 1 (point at a corner of the image)
     """
-    def __normalize_centroid_error(self, distance):
+    def normalize_centroid_error(self, distance):
         # scale the centroid distance by the maximum distance away it can be (without truncating)
         x_max_fp, y_max_fp = self.telescope.uv_to_fp(0, 0) # a centroid at 0, 0 is at the top left of the screen (max dist it can be away from center)
         telescope_center_fp = self.telescope.center
