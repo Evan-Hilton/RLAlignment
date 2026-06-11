@@ -158,7 +158,7 @@ class ImageAnalyzer():
     def _simple_detection(image: np.ndarray, cfg: dict | None = None) -> pd.DataFrame:
         cfg = cfg or {}
         sigma = float(cfg.get("gaussian_sigma", 1.2))
-        pct = float(cfg.get("percentile_threshold", 99.8))
+        pct = float(cfg.get("percentile_threshold", 70.8))
         nsig = float(cfg.get("sigma_threshold", 5.0))
         opening_size = int(cfg.get("opening_size", 2))
 

@@ -24,7 +24,10 @@ button_border_color = (255, 255, 255) # white
 
 # ----------------------------------------------------- variables ---------------------------------------------------------------
 
-config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
+#config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.1NoImageMultPanel.yaml")
+#config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
+config = load_experiment_config("configs/experiments/d06_09_26_noImageOneCentroidObs.yaml")
+#config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope

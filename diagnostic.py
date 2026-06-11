@@ -51,7 +51,7 @@ centroid_detection_color2 = (17, 74, 77)
 # })
 env = NoImagePSCTP12Env({
     "max_steps": 512,
-    "telescope": "configs/telescopes/basicMultiPanelP12Config.yaml"
+    "telescope": "configs/telescopes/diagnosticCheck.yaml"
 })
 env.telescope.reset()
 img_scale = 4
