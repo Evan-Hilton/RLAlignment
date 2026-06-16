@@ -2,6 +2,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter, maximum_filter, label, center_of_mass
 import pandas as pd
 from scipy import ndimage as ndi
+import sep
 
 """
     This class acts as a collection of static methods
@@ -159,10 +160,11 @@ class ImageAnalyzer():
         cfg = cfg or {}
         sigma = float(cfg.get("gaussian_sigma", 1.2))
         pct = float(cfg.get("percentile_threshold", 70.8))
-        nsig = float(cfg.get("sigma_threshold", 5.0))
+        nsig = float(cfg.get("sigma_threshold", 2.0))
         opening_size = int(cfg.get("opening_size", 2))
 
-        smooth = ndi.gaussian_filter(image.astype(float), sigma=sigma)
+        #smooth = ndi.gaussian_filter(image.astype(float), sigma=sigma)
+        smooth = image.astype(float)
         threshold = max(np.percentile(smooth, pct), np.median(smooth) + nsig * np.std(smooth))
         mask = ndi.binary_opening(smooth > threshold, structure=np.ones((opening_size, opening_size)))
         labels, nlab = ndi.label(mask)
@@ -196,3 +198,58 @@ class ImageAnalyzer():
             )
 
         return pd.DataFrame(rows, columns=ImageAnalyzer.CATALOG_COLUMNS)
+    
+    def _ensure_native_float32(image: np.ndarray) -> np.ndarray:
+        arr = np.ascontiguousarray(np.asarray(image, dtype=np.float32))
+        if not arr.dtype.isnative:
+            arr = arr.byteswap().newbyteorder()
+        return arr
+
+    def _sep_detection(image: np.ndarray, cfg: dict | None = None) -> pd.DataFrame:
+        cfg = cfg or {}
+        data = ImageAnalyzer._ensure_native_float32(image)
+
+        bkg = sep.Background(
+            data,
+            bw=int(cfg.get("bw", 64)),
+            bh=int(cfg.get("bh", 64)),
+            fw=int(cfg.get("fw", 3)),
+            fh=int(cfg.get("fh", 3)),
+        )
+        data_sub = data - bkg
+
+        objects = sep.extract(
+            data_sub,
+            thresh=float(cfg.get("threshold_sigma", 5.0)),
+            err=bkg.globalrms,
+            minarea=int(cfg.get("minarea", 3)),
+            deblend_nthresh=int(cfg.get("deblend_nthresh", 32)), # normall 32
+            deblend_cont=float(cfg.get("deblend_cont", 0.0)), # normally 0.005
+            clean=bool(cfg.get("clean", True)),
+            clean_param=float(cfg.get("clean_param", 1.0)),
+            segmentation_map=False,
+        )
+
+        rows = []
+        for i, obj in enumerate(objects):
+            rows.append(
+                {
+                    "ID": i,
+                    "X_IMAGE": float(obj["x"]),
+                    "Y_IMAGE": float(obj["y"]),
+                    "FLUX_ISO": float(obj["flux"]),
+                    "FLUX_MAX": float(obj["peak"]),
+                    "BACKGROUND": float(bkg.globalback),
+                    "A_IMAGE": float(obj["a"]),
+                    "B_IMAGE": float(obj["b"]),
+                    "THETA_IMAGE": float(np.rad2deg(obj["theta"])),
+                    "FLAGS": int(obj["flag"]),
+                }
+            )
+
+        df = pd.DataFrame(rows, columns=ImageAnalyzer.CATALOG_COLUMNS)
+        if df.empty:
+            return df
+        df = df.sort_values("FLUX_MAX", ascending=False).reset_index(drop=True)
+        df["ID"] = np.arange(len(df), dtype=int)
+        return df

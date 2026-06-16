@@ -51,18 +51,18 @@ centroid_detection_color2 = (17, 74, 77)
 # })
 env = NoImagePSCTP12Env({
     "max_steps": 512,
-    "telescope": "configs/telescopes/diagnosticCheck.yaml"
+    "telescope": "configs/telescopes/fine_alignment/basicTelescopeConfig.yaml"
 })
 env.telescope.reset()
-img_scale = 4
+img_scale = 4 * 128 / env.telescope.img_size
 det_cet = None
 
 # ----------------------------------------------------- game logic --------------------------------------------------------------
 
 def main_loop(FRAME): 
    global det_cet
-   det_cet = ImageAnalyzer._simple_detection(env.telescope.image, dict())
-   #print(env.get_current_reward(env.telescope.true_centroids))
+   det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
+   print(det_cet)
 
 """
     Renders the current live view of what the telescope sees.

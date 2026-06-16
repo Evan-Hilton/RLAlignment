@@ -60,6 +60,17 @@ class Telescope:
         self.image = np.clip(self.image, 0, 255)
     
     """
+        if any pixel values are below zero, then all pixels are
+        incremented until no pixel values are below zero. Then,
+        the image is rescaled until all pixel values are less than 255
+        but maintain the same shape
+    """
+    def rescale_image(self):
+        if self.image.min() < 0:
+            self.image += self.image.min()
+        self.image *= 255 * (1 / self.image.max())
+    
+    """
         creates a new image which contains all centroids represented by gaussian
         distributions, who are paramaterized by the function specified in the 
         telescope config.

@@ -26,12 +26,12 @@ button_border_color = (255, 255, 255) # white
 
 #config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.1NoImageMultPanel.yaml")
 #config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
-config = load_experiment_config("configs/experiments/d06_09_26_noImageOneCentroidObs.yaml")
+config = load_experiment_config("configs/experiments/d06_12_26_fineAlignmentNaiveConfig.yaml")
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
-img_scale = 4
+img_scale = 4 * 128 / env.telescope.img_size
 
 def load_model(path, env):
     model = PPO.load(path, env=env)
