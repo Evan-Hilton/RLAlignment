@@ -62,7 +62,7 @@ det_cet = None
 def main_loop(FRAME): 
    global det_cet
    det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
-   print(det_cet)
+   #print(det_cet)
 
 """
     Renders the current live view of what the telescope sees.
@@ -90,8 +90,26 @@ def draw_detected_centroids(surface):
     global centroid_detection_color
     for ID in det_cet['ID'].tolist():
         x, y = det_cet['X_IMAGE'][ID], det_cet['Y_IMAGE'][ID]
-        pygame.draw.circle(surface, centroid_detection_color2, (x*img_scale, y*img_scale), 4)
-        pygame.draw.circle(surface, centroid_detection_color1, (x*img_scale, y*img_scale), 2)
+        A, B = det_cet['A_IMAGE'][ID], det_cet['B_IMAGE'][ID]
+        height, width = 2*B, 2*A
+        angle = -det_cet['THETA_IMAGE'][ID]
+        draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
+        draw_rotated_ellipse(surface, centroid_detection_color1, (x*img_scale, y*img_scale), width*img_scale, height*img_scale, angle, 2)
+
+def draw_point_indicator(surface, inside_color, border_color, radius, location):
+    pygame.draw.circle(surface, border_color, location, radius)
+    pygame.draw.circle(surface, inside_color, location, radius - 2)
+
+def draw_rotated_ellipse(surface, color, center, width, height, angle, outline_width):
+    ellipse_surf = pygame.Surface((width, height), pygame.SRCALPHA)
+
+    pygame.draw.ellipse(ellipse_surf, color, (0, 0, width, height), outline_width)
+
+    rotated_surf = pygame.transform.rotate(ellipse_surf, angle)
+
+    rotated_rect = rotated_surf.get_rect(center=center)
+
+    surface.blit(rotated_surf, rotated_rect)
 
 """
     Renders buttons and such.
@@ -139,6 +157,8 @@ def input_loop(keys, mouse, mouse_pos):
     if keys[pygame.K_l]:
         env.telescope.true_centroids[0] = env.telescope.center
         env.telescope.update()
+    if keys[pygame.K_r]:
+        env.reset()
 
 def advance(action):
     global done

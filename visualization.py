@@ -1,9 +1,11 @@
 import pygame
 import numpy as np
 from stable_baselines3 import PPO
+from stable_baselines3.common.preprocessing import is_image_space
 
 from src.evaluation.Button import Button
 from configs.loaders.load_config import load_experiment_config
+from src.evaluation.multiple_channel_obs_debug_vis import *
 
 pygame.init()
 
@@ -85,9 +87,8 @@ def draw_point_indicator(surface, inside_color, border_color, radius, location):
     screen is 895x515
 """
 def render_agent_screen(surface):
-    if "diagnostic_vis" not in config:
-        return
-    config["diagnostic_vis"](surface, env)
+    if is_image_space(env.observation_space):
+        render_tiled_images(surface, obs)
 
 """
     Renders buttons and such.
@@ -148,6 +149,7 @@ def single_step():
 def advance():
     global done, reward, obs
     action, _ = model.predict(obs, deterministic=True)
+    print(action)
 
     obs, r, terminated, truncated, _ = env.step(action)
     reward.append(r)

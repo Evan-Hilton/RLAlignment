@@ -1,5 +1,5 @@
 # image characteristics
-n_panels: 48
+n_panels: 6
 img_size: 128
 center_fp: [1612.2804, 1024.4423]
 img_fov_pix: 600.0

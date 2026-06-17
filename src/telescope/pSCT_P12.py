@@ -164,3 +164,12 @@ class PSCT_P12(Telescope):
         x_fp = self.center[0] + dx
         y_fp = self.center[1] + dy
         return x_fp, y_fp
+    
+    def multiple_uv_to_fp(self, coordinates):
+        """computes uv_to_fp for the numpy array of coordinates.
+            coordinates should have shape (2, n)"""
+        ret = np.zeros_like(coordinates)
+        for i, (xuv, yuv) in enumerate(coordinates):
+            fpx, fpy = self.uv_to_fp(xuv, yuv)
+            ret[i] = (fpx, fpy)
+        return ret
