@@ -7,13 +7,15 @@ from src.environments.basic_image_env import *
 from src.environments.no_image_psctp12_env import *
 from src.environments.no_image_one_centroid_obs import *
 from src.environments.fine_alignment.naive_image_env import *
+from src.environments.fine_alignment.stacked_image_env import *
 from src.architectures.configurableCNN import *
 
 ENVIRONMENTS = {
     "BasicImageEnv": BasicImageEnv,
     "NoImagePSCTP12Env": NoImagePSCTP12Env,
     "NoImageOneCentroidObs": NoImageOneCentroidObs,
-    "NaiveImageEnv": NaiveImageEnv
+    "NaiveImageEnv": NaiveImageEnv,
+    "StackedImageEnv": StackedImageEnv
 }
 FEATURE_EXTRACTORS = {
     "ConfigurableCNN": ConfigurableCNN

@@ -36,6 +36,8 @@ class NaiveImageEnv(BaseEnv):
         
         self.current_panel = (self.current_panel + 1) % len(self.telescope.panels)
 
+        self.telescope.update()
+
     def get_observation(self):
         return self.telescope.image[None, :].astype(np.uint8)
 

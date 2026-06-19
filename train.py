@@ -9,7 +9,7 @@ from configs.loaders.load_config import load_experiment_config
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/centroid_detection/d06_16_26_basicCentroidDetection.yaml")
+config = load_experiment_config("configs/experiments/d06_19_26_fineAlignmentStackedCnn.yaml")
 
 env = config["environment"](config["env_params"])
 

@@ -1,6 +1,6 @@
-environment: NaiveImageEnv
-model_save_path: runs/fine_alignment/06-12-2026-naiveInitialFineAlignmentExp/agent1
-total_timesteps: 1000000
+environment: StackedImageEnv
+model_save_path: runs/fine_alignment/06-19-2026-simpleStackedCnn/agent1
+total_timesteps: 300000
 
 env_params:
   max_steps: 512
@@ -29,7 +29,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/fine_alignment/06-12-2026-naiveInitialFineAlignmentExp/
+  tensorboard_log: runs/fine_alignment/06-19-2026-simpleStackedCnn/
 
   verbose: 1
   device: cpu

@@ -5,6 +5,7 @@ from stable_baselines3 import PPO
 from src.telescope.pSCT_P12 import PSCT_P12
 from src.telescope.image_analyzer import ImageAnalyzer
 from src.environments.no_image_psctp12_env import NoImagePSCTP12Env
+from src.environments.fine_alignment.naive_image_env import NaiveImageEnv
 
 pygame.init()
 
@@ -49,7 +50,7 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-env = NoImagePSCTP12Env({
+env = NaiveImageEnv({
     "max_steps": 512,
     "telescope": "configs/telescopes/fine_alignment/basicTelescopeConfig.yaml"
 })
