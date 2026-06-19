@@ -30,7 +30,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
 #config = load_experiment_config("configs/experiments/d06_12_26_fineAlignmentNaiveConfig.yaml")
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
-config = load_experiment_config("configs/experiments/d06_12_26_fineAlignmentNaiveConfig.yaml")
+config = load_experiment_config("configs/experiments/d06_19_26_fineAlignmentStackedCnn.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
