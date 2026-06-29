@@ -1,0 +1,34 @@
+feature_extractor_class: StackedImageWithActionDict
+
+feature_extractor_config:
+  current_image_cnn:
+    features_dim: 128
+
+    conv_layers:
+      - out_channels: 32
+        kernel_size: 8
+        stride: 4
+
+      - out_channels: 64
+        kernel_size: 4
+        stride: 2
+
+      - out_channels: 64
+        kernel_size: 3
+        stride: 1
+
+  previous_images_cnn:
+    features_dim: 128
+
+    conv_layers:
+      - out_channels: 32
+        kernel_size: 8
+        stride: 4
+
+      - out_channels: 64
+        kernel_size: 4
+        stride: 2
+
+      - out_channels: 64
+        kernel_size: 3
+        stride: 1
