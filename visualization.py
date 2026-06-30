@@ -1,3 +1,4 @@
+import torch
 import pygame
 import numpy as np
 from stable_baselines3 import PPO
@@ -30,7 +31,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
 #config = load_experiment_config("configs/experiments/d06_12_26_fineAlignmentNaiveConfig.yaml")
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
-config = load_experiment_config("configs/experiments/d06_19_26_fineAlignmentStackedCnn.yaml")
+config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -44,6 +45,7 @@ model = load_model(config["model_save_path"], env)
 obs = env.reset()[0]
 reward = []
 done = False
+feature_vector = None
 
 # ----------------------------------------------------- game logic --------------------------------------------------------------
 
@@ -112,6 +114,7 @@ def reset_sim():
     reward = []
     obs = env.reset()[0]
     done = False
+    compute_feature_vector(obs)
 
 """
     Renders the reward vs time graph.
@@ -153,14 +156,29 @@ def single_step():
     receiving an action and updating the telescope.
 """
 def advance():
-    global done, reward, obs
+    global done, reward, obs, feature_vector
+
     action, _ = model.predict(obs, deterministic=True)
 
     obs, r, terminated, truncated, _ = env.step(action)
     reward.append(r)
-    print(r)
+
+    compute_feature_vector(obs)
+    #print(np.min(feature_vector), np.max(feature_vector))
 
     done = terminated or truncated
+
+def compute_feature_vector(observation):
+    global feature_vector
+    # Convert the observation to the format expected by the policy
+    obs_tensor, _ = model.policy.obs_to_tensor(observation)
+
+    # Compute the feature vector
+    with torch.no_grad():
+        feature_vector = model.policy.features_extractor(obs_tensor)
+
+    # Remove the batch dimension
+    feature_vector = feature_vector.squeeze(0).cpu().numpy()
 
 """
     draws an outline around the window and also labels it
@@ -175,6 +193,40 @@ def outline_window(main_surface, sub_surface, sub_surface_location, name, font):
     x = sub_surface_location[0] + sub_rect.width * 0.5 - text_rect.width * 0.5
     y = sub_surface_location[1] + sub_rect.height + text_rect.height * 0.5
     main_surface.blit(text_surface, (x, y))
+
+def render_feature_view(surface, graph_color):
+    surface.fill(background_color)
+
+    # surface dimensions and border padding
+    surf_rect = (surface.get_rect()[2], surface.get_rect()[3])
+    border_size = (0.05 * surf_rect[0], 0.05 * surf_rect[1])
+    bar_length = surf_rect[0] - (2 * border_size[0])
+
+    # x axis
+    pygame.draw.line(surface, (255, 255, 255), (border_size[0], surf_rect[1] * 0.5), (surf_rect[0] - border_size[0], surf_rect[1] * 0.5))
+
+    # bar graph
+    bar_width = int(bar_length / len(feature_vector))
+    if bar_width < 1: 
+        print(f"WARNING: FEATURE VECTOR TOO BIG TO VISUALIZE. VECTOR SIZE {len(feature_vector)} TOO BIG")
+        return
+    
+    max_value  = np.abs(np.max(feature_vector))
+    max_height = (surf_rect[1] - (2 * border_size[1])) * 0.5
+    for i, value in enumerate(feature_vector):
+        x = i * bar_width
+        h = (value / max_value) * max_height
+        if h >= 0:
+            pygame.draw.rect(surface, graph_color, (x + border_size[0], border_size[1] + max_height - h, bar_width - 1 if bar_width > 1 else 1, h))
+        else:
+            pygame.draw.rect(surface, graph_color, (x + border_size[0], border_size[1] + max_height, bar_width - 1 if bar_width > 1 else 1, -h))
+    
+    # values
+    text_surface = font.render(str(int(max_value * 10)/10), False, text_color)
+    text_rect = text_surface.get_rect()
+    x = border_size[0] * 0.5 - text_rect.width * 0.5
+    y = border_size[1] - text_rect.height * 0.5
+    surface.blit(text_surface, (x, y))
 
 # -------------------------------------------------- background functionality -------------------------------------------------
 
@@ -214,10 +266,14 @@ telescope_view =    pygame.Surface((512, 512))  # at 30  , 30
 telescope_location = (30, 30)
 agent_view =        pygame.Surface((895, 514))  # at 573 , 30
 agent_location = (573, 30)
-ui_view =           pygame.Surface((1112, 292)) # at 30  , 576
+ui_view =           pygame.Surface((160, 292))  # at 30  , 576
 ui_location = (30, 576)
 reward_view =       pygame.Surface((292, 292))  # at 1175, 576
 reward_location = (1175, 576)
+feature_view =      pygame.Surface((922, 292))  # at 220 , 576
+feature_location = (220, 576)
+
+reset_sim()
 
 while run:
     for event in pygame.event.get():
@@ -243,17 +299,20 @@ while run:
     outline_window(main_window, agent_view, agent_location, "agent diagnostics", font)
     outline_window(main_window, ui_view, ui_location, "ui", font)
     outline_window(main_window, reward_view, reward_location, "reward vs time", font)
+    outline_window(main_window, feature_view, feature_location, "feature vector", font)
 
     # render the windows themselves
     render_telescope_screen(telescope_view)
     render_agent_screen(agent_view)
     render_UI_screen(ui_view)
     render_reward_screen(reward_view, graph_color)
+    render_feature_view(feature_view, graph_color)
 
     main_window.blit(telescope_view, telescope_location)
     main_window.blit(agent_view, agent_location)
     main_window.blit(ui_view, ui_location)
     main_window.blit(reward_view, reward_location)
+    main_window.blit(feature_view, feature_location)
 
     input_loop(pygame.key.get_pressed(), pygame.mouse.get_pressed(), pygame.mouse.get_pos()) # a list of all inputs
 

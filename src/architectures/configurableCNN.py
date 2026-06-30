@@ -36,6 +36,13 @@ class ConfigurableCNN(BaseFeaturesExtractor):
 
             layers.append(nn.ReLU())
 
+            if "norm" in layer_cfg.keys():
+                if layer_cfg["norm"]["type"] == "group":
+                    layers.append(nn.GroupNorm(
+                        num_groups=layer_cfg["norm"]["num_groups"],
+                        num_channels=layer_cfg["out_channels"]
+                    ))
+
             in_channels = layer_cfg["out_channels"]
 
         self.cnn = nn.Sequential(*layers)
@@ -54,6 +61,7 @@ class ConfigurableCNN(BaseFeaturesExtractor):
                 n_flatten,
                 cnn_config["features_dim"]
             ),
+            nn.LayerNorm(cnn_config["features_dim"]),
             nn.ReLU()
         )
     

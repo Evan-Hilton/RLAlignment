@@ -10,7 +10,6 @@ class FeatureStatsCallback(BaseCallback):
         obs = self.model._last_obs
 
         with torch.no_grad():
-            # THIS is the critical fix (SB3-safe conversion)
             obs_tensor, _ = self.model.policy.obs_to_tensor(obs)
 
             features = self.model.policy.features_extractor(obs_tensor)

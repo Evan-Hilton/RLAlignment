@@ -1,4 +1,5 @@
 import torch
+import yaml
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
 from src.architectures.configurableCNN import ConfigurableCNN
@@ -7,24 +8,29 @@ class StackedImageWithActionDict(BaseFeaturesExtractor):
 
     def __init__(self, observation_space, config):
 
-        current_dim = config["current_image_cnn"]["features_dim"]
-        previous_dim = config["previous_images_cnn"]["features_dim"]
-        action_dim = observation_space["previous_action"].shape[0]
+        dictConfig = self.load_yaml(config)
+
+        current_cnn_features = self.load_yaml(dictConfig["current_image_cnn"])["features_dim"]
+        previous_cnn_features = self.load_yaml(dictConfig["previous_images_cnn"])["features_dim"]
 
         super().__init__(
             observation_space,
-            features_dim=current_dim + previous_dim + action_dim
+            features_dim=current_cnn_features + previous_cnn_features + observation_space["previous_action"].shape[0]
         )
 
         self.current_cnn = ConfigurableCNN(
             observation_space["current_image"],
-            config["current_image_cnn"]
+            dictConfig["current_image_cnn"]
         )
 
         self.previous_cnn = ConfigurableCNN(
             observation_space["previous_images"],
-            config["previous_images_cnn"]
+            dictConfig["previous_images_cnn"]
         )
+    
+    def load_yaml(self, path):
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
 
     def forward(self, observations):
 

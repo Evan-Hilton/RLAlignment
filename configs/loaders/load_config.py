@@ -52,6 +52,9 @@ def load_experiment_config(path):
         fe_kwargs = dict(config=experiment_dict["network"]["feature_extractor_config"])
         experiment_dict["policy_kwargs"]["features_extractor_class"] = FEATURE_EXTRACTORS[experiment_dict["network"]["feature_extractor_class"]]
         experiment_dict["policy_kwargs"]["features_extractor_kwargs"] = fe_kwargs
+    
+    # add the custom feature extractor to the ppo paramaters
+    experiment_dict["train_config"]["policy_kwargs"] = experiment_dict["policy_kwargs"]
 
     return experiment_dict
 

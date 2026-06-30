@@ -62,10 +62,16 @@ class StackedImageWithActionEnv(NaiveImageEnv):
     def get_observation(self):
         current_panel_id = self.telescope.panels[self.current_panel]
         return {
-            "current_image": np.expand_dims(self.telescope.image, axis=0).astype(np.float32) / 255.0,
-            "previous_images": np.stack([self.panel_information[current_panel_id]["prev_image"], self.panel_information[current_panel_id]["after_image"]], axis=0).astype(np.float32) / 255.0,
+            "current_image": (np.expand_dims(self.telescope.image, axis=0).astype(np.float32) / 255.0),
+            "previous_images": (np.stack([self.panel_information[current_panel_id]["prev_image"], self.panel_information[current_panel_id]["after_image"]], axis=0).astype(np.float32) / 255.0),
             "previous_action": self.panel_information[current_panel_id]["action"].astype(np.float32)
         }
+    
+    def get_current_reward(self, observation):
+        d = self.telescope.true_centroids - self.telescope.center[None, :]
+        mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
+
+        return -mean_r2 * 0.01
     
     def reset_telescope(self):
         super().reset_telescope()
