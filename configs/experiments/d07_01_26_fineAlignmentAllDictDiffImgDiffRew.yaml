@@ -1,6 +1,6 @@
-environment: AllDictObsEnvDiffImg
-model_save_path: runs/fine_alignment/07-01-2026-everythingDictDiffImg/agent2
-total_timesteps: 400000
+environment: AllDictObsEnvDiffImgDiffRew
+model_save_path: runs/fine_alignment/07-01-2026-everythingDictDiffImgDiffRew/agent1
+total_timesteps: 150000
 
 env_params:
   max_steps: 512
@@ -31,7 +31,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/fine_alignment/07-01-2026-everythingDictDiffImgHANTRAIN/
+  tensorboard_log: runs/fine_alignment/07-01-2026-everythingDictDiffImgDiffRew/
 
   verbose: 1
   device: cpu

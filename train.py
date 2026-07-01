@@ -10,7 +10,7 @@ from src.debug_callbacks.featureStatsCallback import *
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImg.yaml")
+config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImgDiffRew.yaml")
 
 env = config["environment"](config["env_params"])
 

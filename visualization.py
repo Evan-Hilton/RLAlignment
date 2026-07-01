@@ -51,6 +51,7 @@ reward = []
 done = False
 feature_vector = None
 agent_view_scale = 3
+step = 0
 
 det_cet = None
 
@@ -204,9 +205,13 @@ def input_loop(keys, mouse, mouse_pos):
         single_step()
 
 def single_step():
-    global done
+    global done, step
     if not done:
         advance()
+        step += 1
+    else:
+        if step != 0: print(step)
+        step = 0
 
 """
     does one frame step of the simulation by passing 

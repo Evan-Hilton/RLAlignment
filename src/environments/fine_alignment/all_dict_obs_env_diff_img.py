@@ -43,7 +43,8 @@ class AllDictObsEnvDiffImg(AllDictObsEnv):
     def get_observation(self):
         obs = super().get_observation()
         obs["previous_images"] = obs["previous_images"][0] - obs["previous_images"][1]
-        obs["previous_images"] += np.min(obs["previous_images"])
+        obs["previous_images"] -= np.min(obs["previous_images"])
         obs["previous_images"] /= (np.max(obs["previous_images"]) if np.max(obs["previous_images"]) > 0 else 1)
         obs["previous_images"] = obs["previous_images"][None, :].astype(np.float32)
+        #print(np.array([self.current_panel / self.telescope.n_panels], dtype=np.float32)) # a value between 0 and 1)
         return obs

@@ -12,6 +12,7 @@ from src.environments.fine_alignment.all_dict_obs_env import *
 from src.environments.fine_alignment.stacked_image_env import *
 from src.environments.fine_alignment.all_dict_obs_env_diff_img import *
 from src.environments.fine_alignment.stacked_image_with_action_env import *
+from src.environments.fine_alignment.all_dict_obs_env_diff_img_diff_rew import *
 
 # feature extractors
 from src.architectures.everythingDict import *
@@ -26,7 +27,8 @@ ENVIRONMENTS = {
     "StackedImageEnv": StackedImageEnv,
     "StackedImageWithActionEnv": StackedImageWithActionEnv,
     "AllDictObsEnv": AllDictObsEnv,
-    "AllDictObsEnvDiffImg": AllDictObsEnvDiffImg
+    "AllDictObsEnvDiffImg": AllDictObsEnvDiffImg,
+    "AllDictObsEnvDiffImgDiffRew": AllDictObsEnvDiffImgDiffRew
 }
 FEATURE_EXTRACTORS = {
     "ConfigurableCNN": ConfigurableCNN,
