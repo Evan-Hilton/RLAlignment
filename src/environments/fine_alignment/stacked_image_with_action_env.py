@@ -50,14 +50,13 @@ class StackedImageWithActionEnv(NaiveImageEnv):
     def apply_action(self, action):
         # get the index of the currently controlled panel
         current_panel_id = self.telescope.panels[self.current_panel]
+        self.panel_information[current_panel_id]["action"] = action
 
         self.panel_information[current_panel_id]["prev_image"] = self.telescope.image
         super().apply_action(action)
         # reset the current panel id because it get updated during apply action
         current_panel_id = self.telescope.panels[(self.current_panel - 1) % len(self.telescope.panels)]
         self.panel_information[current_panel_id]["after_image"] = self.telescope.image
-
-        self.panel_information[current_panel_id]["action"] = action
     
     def get_observation(self):
         current_panel_id = self.telescope.panels[self.current_panel]

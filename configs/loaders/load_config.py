@@ -8,10 +8,13 @@ from src.environments.basic_image_env import *
 from src.environments.no_image_psctp12_env import *
 from src.environments.no_image_one_centroid_obs import *
 from src.environments.fine_alignment.naive_image_env import *
+from src.environments.fine_alignment.all_dict_obs_env import *
 from src.environments.fine_alignment.stacked_image_env import *
+from src.environments.fine_alignment.all_dict_obs_env_diff_img import *
 from src.environments.fine_alignment.stacked_image_with_action_env import *
 
 # feature extractors
+from src.architectures.everythingDict import *
 from src.architectures.configurableCNN import *
 from src.architectures.stackedImageWithActionDict import *
 
@@ -21,11 +24,14 @@ ENVIRONMENTS = {
     "NoImageOneCentroidObs": NoImageOneCentroidObs,
     "NaiveImageEnv": NaiveImageEnv,
     "StackedImageEnv": StackedImageEnv,
-    "StackedImageWithActionEnv": StackedImageWithActionEnv
+    "StackedImageWithActionEnv": StackedImageWithActionEnv,
+    "AllDictObsEnv": AllDictObsEnv,
+    "AllDictObsEnvDiffImg": AllDictObsEnvDiffImg
 }
 FEATURE_EXTRACTORS = {
     "ConfigurableCNN": ConfigurableCNN,
-    "StackedImageWithActionDict": StackedImageWithActionDict
+    "StackedImageWithActionDict": StackedImageWithActionDict,
+    "EverythingDict": EverythingDict
 }
 VEC_ENV_CLS = {
     "SubprocVecEnv": SubprocVecEnv

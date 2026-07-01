@@ -1,4 +1,4 @@
-features_dim: 256
+features_dim: 64
 
 conv_layers:
   - out_channels: 32

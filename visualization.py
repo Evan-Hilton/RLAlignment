@@ -1,10 +1,12 @@
 import torch
 import pygame
 import numpy as np
+from gymnasium import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.preprocessing import is_image_space
 
 from src.evaluation.Button import Button
+from src.telescope.image_analyzer import ImageAnalyzer
 from configs.loaders.load_config import load_experiment_config
 from src.evaluation.multiple_channel_obs_debug_vis import *
 
@@ -31,7 +33,9 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_10_26_tubeDragging0.5NoImageMultPanel.yaml")
 #config = load_experiment_config("configs/experiments/d06_12_26_fineAlignmentNaiveConfig.yaml")
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
-config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
+#config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
+# config = load_experiment_config("configs/experiments/d06_30_26_fineAlignmentAllDictObsSpace.yaml")
+config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImg.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -46,11 +50,15 @@ obs = env.reset()[0]
 reward = []
 done = False
 feature_vector = None
+agent_view_scale = 3
+
+det_cet = None
 
 # ----------------------------------------------------- game logic --------------------------------------------------------------
 
 def main_loop(FRAME):
-    ...
+    global det_cet
+    det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
 
 """
     Renders the current live view of what the telescope sees.
@@ -75,6 +83,22 @@ def render_telescope_screen(surface):
     # draw screen center
     if draw_screen_center:
         draw_centroids(surface, [env.telescope.center])
+        draw_detected_centroids(surface)
+
+"""
+    Adds a little symbol indicating where all of the detected
+    centroids in the image are
+"""
+def draw_detected_centroids(surface):
+    global centroid_detection_color
+    for ID in det_cet['ID'].tolist():
+        x, y = det_cet['X_IMAGE'][ID], det_cet['Y_IMAGE'][ID]
+        A, B = det_cet['A_IMAGE'][ID], det_cet['B_IMAGE'][ID]
+        height, width = 2*B, 2*A
+        angle = -det_cet['THETA_IMAGE'][ID]
+        draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
+        draw_rotated_ellipse(surface, centroid_detection_color1, (x*img_scale, y*img_scale), width*img_scale, height*img_scale, angle, 2)
+        
 
 """
     Adds a little symbol indicating where all of the detected
@@ -90,6 +114,17 @@ def draw_point_indicator(surface, inside_color, border_color, radius, location):
     pygame.draw.circle(surface, border_color, location, radius)
     pygame.draw.circle(surface, inside_color, location, radius - 2)
 
+def draw_rotated_ellipse(surface, color, center, width, height, angle, outline_width):
+    ellipse_surf = pygame.Surface((width, height), pygame.SRCALPHA)
+
+    pygame.draw.ellipse(ellipse_surf, color, (0, 0, width, height), outline_width)
+
+    rotated_surf = pygame.transform.rotate(ellipse_surf, angle)
+
+    rotated_rect = rotated_surf.get_rect(center=center)
+
+    surface.blit(rotated_surf, rotated_rect)
+
 """
     Renders a live view of diagnostics of the agent.
     screen is 895x515
@@ -97,6 +132,29 @@ def draw_point_indicator(surface, inside_color, border_color, radius, location):
 def render_agent_screen(surface):
     if is_image_space(env.observation_space):
         render_tiled_images(surface, obs)
+    if type(obs) == dict:
+        render_dict_images(surface, obs)
+
+def render_dict_images(surface, observation):
+    i = 0
+    for key, dict_observation in observation.items():
+        if is_image(dict_observation):
+            channels = dict_observation.shape[0] # checks how many color channels are in the observation
+            w = channels * env.telescope.img_size*agent_view_scale
+            h = env.telescope.img_size*agent_view_scale
+            subsurface = pygame.Surface((w, h))
+            render_tiled_images(subsurface, dict_observation * 255, scale=agent_view_scale)
+            pygame.draw.rect(subsurface, (255, 255, 255), (0, 0, w, h), 1)
+            surface.blit(subsurface, (8, 8 + i * env.telescope.img_size * agent_view_scale))
+            i += 1
+
+"""
+    Determines if the gymnasium space is an image by checking
+    it's dimensions and seeing if they match the dimensions of
+    telescope.image.shape
+"""
+def is_image(image):
+    return image.shape[1:] == (env.telescope.img_size, env.telescope.img_size)
 
 """
     Renders buttons and such.

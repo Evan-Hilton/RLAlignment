@@ -224,7 +224,7 @@ class ImageAnalyzer():
             err=bkg.globalrms,
             minarea=int(cfg.get("minarea", 3)),
             deblend_nthresh=int(cfg.get("deblend_nthresh", 32)), # normall 32
-            deblend_cont=float(cfg.get("deblend_cont", 0.0)), # normally 0.005
+            deblend_cont=float(cfg.get("deblend_cont", 0.005)), # normally 0.005
             clean=bool(cfg.get("clean", True)),
             clean_param=float(cfg.get("clean_param", 1.0)),
             segmentation_map=False,

@@ -50,8 +50,8 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-#tele = "configs/telescopes/fine_alignment/basicTelescopeConfig.yaml"
-tele = "configs/telescopes/example.yaml"
+tele = "configs/telescopes/fine_alignment/basicTelescopeConfig.yaml"
+#tele = "configs/telescopes/example.yaml"
 env = NaiveImageEnv({
     "max_steps": 512,
     "telescope": tele
@@ -65,7 +65,36 @@ det_cet = None
 def main_loop(FRAME): 
    global det_cet
    det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
-   #print(det_cet)
+   columns = [
+        "X_IMAGE",
+        "Y_IMAGE",
+        "FLUX_ISO",
+        "FLUX_MAX",
+        "BACKGROUND",
+        "A_IMAGE",
+        "B_IMAGE",
+        "THETA_IMAGE",
+        ]
+   detected = det_cet[columns].to_numpy()
+   obs = np.zeros((env.telescope.n_panels, 8), dtype=np.float32)
+   n_detected = len(detected)
+   obs[:n_detected] = detected[:n_detected]
+
+   # normalization
+   obs[:, 0] /= env.telescope.img_size
+   obs[:, 1] /= env.telescope.img_size
+
+   obs[:, 2] /= 5e+04
+
+   obs[:, 3] /= 255
+   obs[:, 4] /= 255
+
+   obs[:, 5] /= 5
+   obs[:, 6] /= 5
+
+   obs[:, 7] /= 90
+   
+   print(obs)
 
 """
     Renders the current live view of what the telescope sees.
@@ -96,8 +125,8 @@ def draw_detected_centroids(surface):
         A, B = det_cet['A_IMAGE'][ID], det_cet['B_IMAGE'][ID]
         height, width = 2*B, 2*A
         angle = -det_cet['THETA_IMAGE'][ID]
-        # draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
-        # draw_rotated_ellipse(surface, centroid_detection_color1, (x*img_scale, y*img_scale), width*img_scale, height*img_scale, angle, 2)
+        draw_point_indicator(surface, centroid_detection_color1, centroid_detection_color2, 4, (x*img_scale, y*img_scale))
+        draw_rotated_ellipse(surface, centroid_detection_color1, (x*img_scale, y*img_scale), width*img_scale, height*img_scale, angle, 2)
 
 def draw_point_indicator(surface, inside_color, border_color, radius, location):
     pygame.draw.circle(surface, border_color, location, radius)

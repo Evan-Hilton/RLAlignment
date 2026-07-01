@@ -26,6 +26,8 @@ class NaiveImageEnv(BaseEnv):
                                 dtype=np.float32,
                             )
         )
+
+        self.success_radius = 5
     
     def apply_action(self, action):
         current_panel_id = self.telescope.panels[self.current_panel]
@@ -62,7 +64,7 @@ class NaiveImageEnv(BaseEnv):
         return reward
     
     def check_terminated(self, observation):
-        success = ImageAnalyzer.all_centroids_at_center(self.telescope.center, self.telescope.true_centroids, success_radius=5)
+        success = ImageAnalyzer.all_centroids_at_center(self.telescope.center, self.telescope.true_centroids, success_radius=self.success_radius)
         return success, 100 if success else 0
 
     def reset_telescope(self):
