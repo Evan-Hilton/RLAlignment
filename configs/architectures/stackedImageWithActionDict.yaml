@@ -1,0 +1,2 @@
+current_image_cnn: configs/architectures/normCnn.yaml
+previous_images_cnn: configs/architectures/normCnn.yaml
