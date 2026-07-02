@@ -35,7 +35,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 #config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
 # config = load_experiment_config("configs/experiments/d06_30_26_fineAlignmentAllDictObsSpace.yaml")
-config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImg.yaml")
+config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImgDiffRew.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -227,7 +227,7 @@ def advance():
     reward.append(r)
 
     compute_feature_vector(obs)
-    #print(np.min(feature_vector), np.max(feature_vector))
+    #print(action)
 
     done = terminated or truncated
 
