@@ -18,7 +18,7 @@ game_name = "agent visualizer" # the name of the window that pops up
 WIDTH = 1500 # pixels
 HEIGHT = 900 # pixels
 FRAME = 0
-FRAME_RATE = 120 # frames / second
+FRAME_RATE = 24 # frames / second
 background_color = (0, 0, 0) # black
 graph_color = (210, 240, 210) # nice light green color
 centroid_detection_color1 = (252, 53, 213) # PINK!
@@ -35,7 +35,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 #config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
 # config = load_experiment_config("configs/experiments/d06_30_26_fineAlignmentAllDictObsSpace.yaml")
-config = load_experiment_config("configs/experiments/d07_01_26_fineAlignmentAllDictDiffImg.yaml")
+config = load_experiment_config("configs/experiments/d07_02_26_fineAlignmentAllDictDiffImgDiffRew.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
