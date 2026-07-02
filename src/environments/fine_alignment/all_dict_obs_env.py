@@ -79,7 +79,7 @@ class AllDictObsEnv(StackedImageWithActionEnv):
         obs[:, 5] /= 5                          # A_IMG
         obs[:, 6] /= 5                          # B_IMG
 
-        obs[:, 7] /= 90 / 1.3                         # THETA_IMG
+        obs[:, 7] /= 90                         # THETA_IMG
 
         observation = super().get_observation()
         observation["current_panel_id"] = np.array([self.current_panel / self.telescope.n_panels], dtype=np.float32) # a value between 0 and 1
