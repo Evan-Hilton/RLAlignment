@@ -1,0 +1,13 @@
+An agent with an observation space specified below. It controls a 3 panel telescope with no image noise, actuator noise, or tube dragging and sucessfully does phase 2 alignment.
+
+The observations space is:
+An image of the current view seen by the telescope -> cnn to a 32 dimensional feature vector
+A difference image of the last time the current panel was moved. Basically every time a panel is moved, we keep track of what the image looked like before and after that motion, take the difference of the two images, and save it. The next time that panel is about to be moved, we give the agent this image. -> cnn to a 32 dimensional feature vector
+The output of sep detection for each detected centroid. I take 8 values from the output of the sep detection. Each centroid is fed through an mlp with a network 32 neuron to 16 neuron to 32 output vector, and the outputs are averaged together.
+A single value between 0 and 1 which is a proxy to the panel id of the panel the agent is about to control
+
+Each of the feature vectors output from the observation space network are all concactenated into a single feature vector and fed into the policy and critic networks. This is the feature extractor stuff I was talking about in yesterday's meeting.
+
+The reward signal is -((the average width of all centroids normalized to 0-1) + (average distance of all detected centroid positions from the telescope center normalized to 0-1)).
+
+Also there are some things worrying me about training. If you look at the training curve for the agent (runs/fine_alignment/d07_02_26_.../PPO_2 I think), the explained variance does not approach 1 but oscillates wildly. I think this means that the critic network is not able to predict what the policy network will do. It's been doing this all summer for most of the agents I train. Also, the clip fraction reaches 0.6 near the end of training which means 60% of of the updates are being clipped by ppo. 0.3 is on the upper end of a healthy value, so I'd like to figure out what is going on with this as well. Approx_kl is also becoming concerningly large at 0.06 (normal is 0.002-0.03).
