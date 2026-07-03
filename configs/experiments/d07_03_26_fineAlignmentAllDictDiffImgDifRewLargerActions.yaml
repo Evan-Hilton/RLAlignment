@@ -1,6 +1,6 @@
 environment: AllDictObsEnvDiffImgDiffRew
 model_save_path: runs/fine_alignment/07-03-2026-everythingDictDiffImgDiffRewDiffAction/agent3
-total_timesteps: 310000
+total_timesteps: 800000
 
 env_params:
   max_steps: 512
