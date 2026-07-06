@@ -16,4 +16,4 @@ class AllDictObsEnvDiffImgDiffRew(AllDictObsEnvDiffImg):
         mean_size = np.max(mean_size, axis=0)
         mean_size = np.mean(mean_size)
 
-        return -mean_r2 - mean_size
+        return float(-mean_r2 - mean_size)
