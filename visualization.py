@@ -55,11 +55,13 @@ step = 0
 
 det_cet = None
 
-# ----------------------------------------------------- game logic --------------------------------------------------------------
+# ----------------------------------------------------- Main Computation --------------------------------------------------------------
 
 def main_loop(FRAME):
     global det_cet
     det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
+
+# ----------------------------------------------------- Telescope View --------------------------------------------------------------
 
 """
     Renders the current live view of what the telescope sees.
@@ -126,6 +128,8 @@ def draw_rotated_ellipse(surface, color, center, width, height, angle, outline_w
 
     surface.blit(rotated_surf, rotated_rect)
 
+# ----------------------------------------------------- Agent Diagnostic screen --------------------------------------------------------------
+
 """
     Renders a live view of diagnostics of the agent.
     screen is 895x515
@@ -157,6 +161,8 @@ def render_dict_images(surface, observation):
 def is_image(image):
     return image.shape[1:] == (env.telescope.img_size, env.telescope.img_size)
 
+# ----------------------------------------------------- UI Buttons --------------------------------------------------------------
+
 """
     Renders buttons and such.
     screen is 1112x292
@@ -174,6 +180,8 @@ def reset_sim():
     obs = env.reset()[0]
     done = False
     compute_feature_vector(obs)
+
+# ----------------------------------------------------- Reward Graph Screen --------------------------------------------------------------
 
 """
     Renders the reward vs time graph.
@@ -231,6 +239,8 @@ def advance():
 
     done = terminated or truncated
 
+# ----------------------------------------------------- Feature Vector Vis --------------------------------------------------------------
+
 def compute_feature_vector(observation):
     global feature_vector
     # Convert the observation to the format expected by the policy
@@ -242,20 +252,6 @@ def compute_feature_vector(observation):
 
     # Remove the batch dimension
     feature_vector = feature_vector.squeeze(0).cpu().numpy()
-
-"""
-    draws an outline around the window and also labels it
-"""
-def outline_window(main_surface, sub_surface, sub_surface_location, name, font):
-    sub_rect = sub_surface.get_rect()
-    pygame.draw.rect(main_surface, text_color, (sub_surface_location[0] - 1, sub_surface_location[1] - 1, sub_rect.width + 2, sub_rect.height + 2), 1)
-
-    # place the label at the bottom middle of the window
-    text_surface = font.render(name, False, text_color)
-    text_rect = text_surface.get_rect()
-    x = sub_surface_location[0] + sub_rect.width * 0.5 - text_rect.width * 0.5
-    y = sub_surface_location[1] + sub_rect.height + text_rect.height * 0.5
-    main_surface.blit(text_surface, (x, y))
 
 def render_feature_view(surface, graph_color):
     surface.fill(background_color)
@@ -290,6 +286,22 @@ def render_feature_view(surface, graph_color):
     x = border_size[0] * 0.5 - text_rect.width * 0.5
     y = border_size[1] - text_rect.height * 0.5
     surface.blit(text_surface, (x, y))
+
+# ----------------------------------------------------- General UI stuff --------------------------------------------------------------
+
+"""
+    draws an outline around the window and also labels it
+"""
+def outline_window(main_surface, sub_surface, sub_surface_location, name, font):
+    sub_rect = sub_surface.get_rect()
+    pygame.draw.rect(main_surface, text_color, (sub_surface_location[0] - 1, sub_surface_location[1] - 1, sub_rect.width + 2, sub_rect.height + 2), 1)
+
+    # place the label at the bottom middle of the window
+    text_surface = font.render(name, False, text_color)
+    text_rect = text_surface.get_rect()
+    x = sub_surface_location[0] + sub_rect.width * 0.5 - text_rect.width * 0.5
+    y = sub_surface_location[1] + sub_rect.height + text_rect.height * 0.5
+    main_surface.blit(text_surface, (x, y))
 
 # -------------------------------------------------- background functionality -------------------------------------------------
 
