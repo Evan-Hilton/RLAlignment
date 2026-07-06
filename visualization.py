@@ -15,7 +15,7 @@ pygame.init()
 # ------------------------------------------------ necessary game settings ------------------------------------------------------
 
 game_name = "agent visualizer" # the name of the window that pops up
-WIDTH = 1500 # pixels
+WIDTH = 1530 # pixels
 HEIGHT = 900 # pixels
 FRAME = 0
 FRAME_RATE = 24 # frames / second
@@ -187,7 +187,7 @@ def reset_sim():
     Renders the reward vs time graph.
     screen is 292x292
 """
-def render_reward_screen(surface, graph_color):
+def render_reward_screen(surface, graph_color, main_surface):
     surface.fill(background_color)
     global reward
     if len(reward) < 2 or np.max(reward) - np.min(reward) == 0:
@@ -206,6 +206,21 @@ def render_reward_screen(surface, graph_color):
     ]
 
     pygame.draw.lines(surface, graph_color, False, points, 2)
+    render_reward_graph_y_values(main_surface)
+
+def render_reward_graph_y_values(main_surface):
+    max_value_text = font.render(str(int(np.max(reward) * 100)/100), False, text_color)
+    max_value_text_rect = max_value_text.get_rect()
+    min_value_text = font.render(str(int(np.min(reward) * 100)/100), False, text_color)
+    min_value_text_rect = min_value_text.get_rect()
+
+    max_value_x = reward_location[0] + reward_view.get_rect().width + max_value_text_rect.width * 0.25
+    max_value_y = reward_location[1] - max_value_text_rect.height * 0.5
+    min_value_x = reward_location[0] + reward_view.get_rect().width + min_value_text_rect.width * 0.25
+    min_value_y = reward_location[1] + reward_view.get_rect().height - min_value_text_rect.height * 0.5
+
+    main_surface.blit(max_value_text, (max_value_x, max_value_y))
+    main_surface.blit(min_value_text, (min_value_x, min_value_y))
 
 def input_loop(keys, mouse, mouse_pos):
     global done, reward
@@ -380,7 +395,7 @@ while run:
     render_telescope_screen(telescope_view)
     render_agent_screen(agent_view)
     render_UI_screen(ui_view)
-    render_reward_screen(reward_view, graph_color)
+    render_reward_screen(reward_view, graph_color, main_window)
     render_feature_view(feature_view, graph_color)
 
     main_window.blit(telescope_view, telescope_location)
