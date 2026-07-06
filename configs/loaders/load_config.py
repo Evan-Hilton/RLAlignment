@@ -13,11 +13,13 @@ from src.environments.fine_alignment.stacked_image_env import *
 from src.environments.fine_alignment.all_dict_obs_env_diff_img import *
 from src.environments.fine_alignment.stacked_image_with_action_env import *
 from src.environments.fine_alignment.all_dict_obs_env_diff_img_diff_rew import *
+from src.environments.fine_alignment.all_dict_obs_env_diff_img_diff_rew_one_hot_id import *
 
 # feature extractors
 from src.architectures.everythingDict import *
 from src.architectures.configurableCNN import *
 from src.architectures.stackedImageWithActionDict import *
+from src.architectures.everythingDictWithOneHotPanelIDs import *
 
 ENVIRONMENTS = {
     "BasicImageEnv": BasicImageEnv,
@@ -28,12 +30,14 @@ ENVIRONMENTS = {
     "StackedImageWithActionEnv": StackedImageWithActionEnv,
     "AllDictObsEnv": AllDictObsEnv,
     "AllDictObsEnvDiffImg": AllDictObsEnvDiffImg,
-    "AllDictObsEnvDiffImgDiffRew": AllDictObsEnvDiffImgDiffRew
+    "AllDictObsEnvDiffImgDiffRew": AllDictObsEnvDiffImgDiffRew,
+    "AllDictObsEnvDiffImgDiffRewOneHotID": AllDictObsEnvDiffImgDiffRewOneHotID
 }
 FEATURE_EXTRACTORS = {
     "ConfigurableCNN": ConfigurableCNN,
     "StackedImageWithActionDict": StackedImageWithActionDict,
-    "EverythingDict": EverythingDict
+    "EverythingDict": EverythingDict,
+    "EverythingDictWithOneHotPanelIDs": EverythingDictWithOneHotPanelIDs
 }
 VEC_ENV_CLS = {
     "SubprocVecEnv": SubprocVecEnv
