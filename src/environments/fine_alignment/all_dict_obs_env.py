@@ -76,8 +76,8 @@ class AllDictObsEnv(StackedImageWithActionEnv):
         obs[:, 3] /= 255                        # FLUX_MAX
         obs[:, 4] /= 255                        # BACKGROUND
 
-        obs[:, 5] /= 5                          # A_IMG
-        obs[:, 6] /= 5                          # B_IMG
+        obs[:, 5] /= 10                          # A_IMG
+        obs[:, 6] /= 10                          # B_IMG
 
         obs[:, 7] /= 90                         # THETA_IMG
 

@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # ========= Train ========
     save_callback = ModelSaveCallback(
         save_freq=config["save_frequency"],
-        save_path=config["save_path"],
+        save_path=config["model_save_path"],
         verbose=1
     )
 
@@ -58,5 +58,5 @@ if __name__ == "__main__":
         ]
     )
 
-    model.save(config["model_save_path"])
+    model.save(config["model_save_path"] + "/final")
     env.close()
