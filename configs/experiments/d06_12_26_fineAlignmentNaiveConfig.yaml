@@ -35,5 +35,5 @@ train_config:
   tensorboard_log: runs/fine_alignment/06-12-2026-naiveInitialFineAlignmentExp/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

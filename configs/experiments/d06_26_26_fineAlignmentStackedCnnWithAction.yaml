@@ -35,5 +35,5 @@ train_config:
   tensorboard_log: runs/fine_alignment/06-26-2026-stackedCnnWithAction/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

@@ -35,5 +35,5 @@ train_config:
   tensorboard_log: runs/06-01-2026_onePanelImageYAMLCheck/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

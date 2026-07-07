@@ -35,5 +35,5 @@ train_config:
   tensorboard_log: runs/fine_alignment/07-01-2026-everythingDictDiffImgHANTRAIN/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

@@ -33,5 +33,5 @@ train_config:
   tensorboard_log: runs/06-10-2026-tubeDragging0.1MultPanelP12/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

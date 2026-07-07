@@ -33,5 +33,5 @@ train_config:
   tensorboard_log: runs/06-09-2026-multPanelNoImageOneCentroidObs/
 
   verbose: 1
-  device: cpu
+  device: auto
   _init_setup_model: True

@@ -1,20 +1,20 @@
-environment: AllDictObsEnvDiffImgDiffRew
-model_save_path: runs/fine_alignment/07-02-2026-everythingDictDiffImgDiffRew/agent3
-total_timesteps: 310000
-save_frequency: 310000
+environment: AllDictObsEnvDiffImgDiffRewOneHotID
+model_save_path: runs/fine_alignment/d07_07_26_n_panels/6/agents
+total_timesteps: 5000000
+save_frequency: 500000
 
 env_params:
   max_steps: 512
-  telescope: configs/telescopes/fine_alignment/basicTelescopeConfig.yaml
+  telescope: configs/telescopes/fine_alignment/n_panels/6.yaml
 
 n_training_envs: 8
 vec_env_cls: SubprocVecEnv
 
 network:
-  feature_extractor_class: EverythingDict
+  feature_extractor_class: EverythingDictWithOneHotPanelIDs
   feature_extractor_config: configs/architectures/everythingDict.yaml
-  pi: [256, 256]
-  vf: [256, 256, 256, 128]
+  pi: [512, 256, 256]
+  vf: [512, 512, 256, 128, 64]
 
 train_config:
   policy: MultiInputPolicy
@@ -32,7 +32,7 @@ train_config:
   use_sde: False
   sde_sample_freq: -1
   stats_window_size: 100
-  tensorboard_log: runs/fine_alignment/07-02-2026-everythingDictDiffImgDiffRew/
+  tensorboard_log: runs/fine_alignment/d07_07_26_n_panels/6/
 
   verbose: 1
   device: auto
