@@ -1,6 +1,6 @@
 environment: AllDictObsEnvDiffImgDiffRewOneHotID
-model_save_path: runs/fine_alignment/07-06-2026-everythingDictDiffImgDiffRewOneHotIDs/agent3
-total_timesteps: 500000
+model_save_path: runs/fine_alignment/07-06-2026-everythingDictDiffImgDiffRewOneHotIDs/agent3000000
+total_timesteps: 3000000
 
 env_params:
   max_steps: 512
