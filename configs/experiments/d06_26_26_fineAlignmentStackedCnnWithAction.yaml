@@ -1,6 +1,7 @@
 environment: StackedImageWithActionEnv
 model_save_path: runs/fine_alignment/06-26-2026-stackedCnnWithAction/agent1
 total_timesteps: 100000
+save_frequency: 100000
 
 env_params:
   max_steps: 512

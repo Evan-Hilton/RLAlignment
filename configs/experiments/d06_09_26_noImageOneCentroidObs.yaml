@@ -1,6 +1,7 @@
 environment: NoImageOneCentroidObs
 model_save_path: runs/06-09-2026-multPanelNoImageOneCentroidObs/agent8.1
 total_timesteps: 1000000
+save_frequency: 500000
 
 env_params:
   max_steps: 1024

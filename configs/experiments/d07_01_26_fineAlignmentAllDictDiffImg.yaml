@@ -1,6 +1,7 @@
 environment: AllDictObsEnvDiffImg
 model_save_path: runs/fine_alignment/07-01-2026-everythingDictDiffImg/agent2
 total_timesteps: 400000
+save_frequency: 400000
 
 env_params:
   max_steps: 512

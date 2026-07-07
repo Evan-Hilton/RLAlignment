@@ -1,6 +1,7 @@
 environment: BasicImageEnv
 model_save_path: runs/06-09-2026_onePanelImageYAMLCheck/agent
 total_timesteps: 100000
+save_frequency: 100000
 
 env_params:
   max_steps: 512

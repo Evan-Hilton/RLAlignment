@@ -1,6 +1,7 @@
 environment: AllDictObsEnv
 model_save_path: runs/fine_alignment/06-30-2026-everythingDict/agent1
 total_timesteps: 200000
+save_frequency: 200000
 
 env_params:
   max_steps: 512

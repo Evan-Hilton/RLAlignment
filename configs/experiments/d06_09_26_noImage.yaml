@@ -1,6 +1,7 @@
 environment: NoImagePSCTP12Env
 model_save_path: runs/06-09-2026-multPanelNoImage/agent6
 total_timesteps: 5000000
+save_frequency: 1000000
 
 env_params:
   max_steps: 512

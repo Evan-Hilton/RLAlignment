@@ -1,6 +1,7 @@
 environment: NoImagePSCTP12Env
 model_save_path: runs/06-10-2026-tubeDragging0.1MultPanelP12/agent3
 total_timesteps: 700000
+save_frequency: 300000
 
 env_params:
   max_steps: 512

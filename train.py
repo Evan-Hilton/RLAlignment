@@ -6,6 +6,7 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
 
 from configs.loaders.load_config import load_experiment_config
+from src.debug_callbacks.modelSaveCallback import ModelSaveCallback
 from src.debug_callbacks.featureStatsCallback import *
 
 # ================ CHECK ENVIRONMENT ================
@@ -42,6 +43,20 @@ if __name__ == "__main__":
         **ppoConfig
     )
 
-    model.learn(total_timesteps=config["total_timesteps"], callback=FeatureStatsCallback())
+    # ========= Train ========
+    save_callback = ModelSaveCallback(
+        save_freq=config["save_frequency"],
+        save_path=config["save_path"],
+        verbose=1
+    )
+
+    model.learn(
+        total_timesteps=config["total_timesteps"],
+        callback=[
+            FeatureStatsCallback(),
+            save_callback
+        ]
+    )
+
     model.save(config["model_save_path"])
     env.close()
