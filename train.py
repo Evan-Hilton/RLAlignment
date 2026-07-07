@@ -11,7 +11,7 @@ from src.debug_callbacks.featureStatsCallback import *
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d07_07_26_baseline.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/4.yaml")
 
 env = config["environment"](config["env_params"])
 
