@@ -291,9 +291,17 @@ def render_feature_view(surface, graph_color):
         x = i * bar_width
         h = (value / max_value) * max_height
         if h >= 0:
-            pygame.draw.rect(surface, graph_color, (x + border_size[0], border_size[1] + max_height - h, bar_width - 1 if bar_width > 1 else 1, h))
+            pygame.draw.rect(surface, graph_color, (
+                int(x + border_size[0]), 
+                int(border_size[1] + max_height - h), 
+                int(bar_width - 1 if bar_width > 1 else 1), 
+                int(h)))
         else:
-            pygame.draw.rect(surface, graph_color, (x + border_size[0], border_size[1] + max_height, bar_width - 1 if bar_width > 1 else 1, -h))
+            pygame.draw.rect(surface, graph_color, (
+                int(x + border_size[0]), 
+                int(border_size[1] + max_height), 
+                int(bar_width - 1 if bar_width > 1 else 1), 
+                int(-h)))
     
     # values
     text_surface = font.render(str(int(max_value * 10)/10), False, text_color)
