@@ -52,4 +52,5 @@ class AllDictObsEnvDiffImgDiffRewOneHotID(AllDictObsEnvDiffImgDiffRew):
         observation["current_panel_id"][self.current_panel] = 1
         observation["detected_centroids"][:, 5] /= 2
         observation["detected_centroids"][:, 6] /= 2
+        observation["detected_centroids"][:, 2] /= 3
         return observation

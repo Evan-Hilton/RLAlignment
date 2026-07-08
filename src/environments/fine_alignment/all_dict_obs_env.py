@@ -72,9 +72,9 @@ class AllDictObsEnv(StackedImageWithActionEnv):
         obs[:, 1] /= self.telescope.img_size    # Y_IMAGE
 
         obs[:, 2] /= 5e+04                      # FLUX_ISO
+        obs[:, 3] /= 256                        # FLUX_MAX
 
-        obs[:, 3] /= 255                        # FLUX_MAX
-        obs[:, 4] /= 255                        # BACKGROUND
+        obs[:, 4] /= 256                        # BACKGROUND
 
         obs[:, 5] /= 10                          # A_IMG
         obs[:, 6] /= 10                          # B_IMG
