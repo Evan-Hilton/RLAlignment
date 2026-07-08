@@ -35,7 +35,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d06_09_26_noImage.yaml")
 #config = load_experiment_config("configs/experiments/d06_26_26_fineAlignmentStackedCnnWithAction.yaml")
 # config = load_experiment_config("configs/experiments/d06_30_26_fineAlignmentAllDictObsSpace.yaml")
-config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.01.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.20.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope

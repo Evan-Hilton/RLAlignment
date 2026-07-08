@@ -50,7 +50,7 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-tele = "configs/telescopes/fine_alignment/img_noise/img_noise.yaml"
+tele = "configs/telescopes/fine_alignment/n_panels/4.yaml"
 #tele = "configs/telescopes/example.yaml"
 env = NaiveImageEnv({
     "max_steps": 512,
@@ -191,6 +191,9 @@ def input_loop(keys, mouse, mouse_pos):
         env.telescope.update()
     if keys[pygame.K_r]:
         env.reset()
+    if keys[pygame.K_b]:
+        env.telescope.true_centroids = np.array([[1494.37987882, 875.5200608],[1652.49663262, 1140.64258532],[1745.1680854, 887.48300033],[1501.9680002, 1113.0027051]])
+        env.telescope.update()
 
 def advance(action):
     global done

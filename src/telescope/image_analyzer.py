@@ -220,7 +220,7 @@ class ImageAnalyzer():
 
         objects = sep.extract(
             data_sub,
-            thresh=float(cfg.get("threshold_sigma", 5.0)),
+            thresh=float(cfg.get("threshold_sigma", 1.0)), # normally 5
             err=bkg.globalrms,
             minarea=int(cfg.get("minarea", 3)),
             deblend_nthresh=int(cfg.get("deblend_nthresh", 32)), # normall 32
