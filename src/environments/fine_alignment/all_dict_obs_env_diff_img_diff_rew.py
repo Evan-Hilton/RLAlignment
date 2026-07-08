@@ -8,7 +8,10 @@ class AllDictObsEnvDiffImgDiffRew(AllDictObsEnvDiffImg):
             if not (centroid==0).all(): 
                 new_detected_centroids.append([centroid[0], centroid[1]])
         detected_centroids = np.array(new_detected_centroids)
-        d = self.telescope.multiple_uv_to_fp(detected_centroids * self.telescope.img_size) - self.telescope.center[None, :]
+        try:
+            d = self.telescope.multiple_uv_to_fp(detected_centroids * self.telescope.img_size) - self.telescope.center[None, :]
+        except:
+            d = np.zeros_like(self.telescope.true_centroids,dtype=np.float32)
         mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
         mean_r2 /= self.telescope.init_scatter_pix
 
