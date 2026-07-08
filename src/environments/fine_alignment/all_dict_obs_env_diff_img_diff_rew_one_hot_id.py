@@ -51,5 +51,5 @@ class AllDictObsEnvDiffImgDiffRewOneHotID(AllDictObsEnvDiffImgDiffRew):
         observation["current_panel_id"] = np.zeros(self.telescope.n_panels, dtype=np.uint8)
         observation["current_panel_id"][self.current_panel] = 1
         observation["detected_centroids"][:, 5] /= 2
-        observation["detected_centroids"][:, 5] /= 2
+        observation["detected_centroids"][:, 6] /= 2
         return observation
