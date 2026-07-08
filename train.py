@@ -11,7 +11,7 @@ from src.debug_callbacks.featureStatsCallback import *
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/4.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.05.yaml")
 
 env = config["environment"](config["env_params"])
 
