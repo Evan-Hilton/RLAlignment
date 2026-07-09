@@ -1,7 +1,7 @@
 environment: AllDictObsEnvDiffImgDiffRewOneHotID
 model_save_path: runs/fine_alignment/d07_07_26_n_panels/8/agents
-total_timesteps: 8000000
-save_frequency: 1000000
+total_timesteps: 10000000
+save_frequency: 500000
 
 env_params:
   max_steps: 512

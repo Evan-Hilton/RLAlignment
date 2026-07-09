@@ -32,7 +32,8 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.01.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.05.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.20.yaml")
-config = load_experiment_config("configs/experiments/d07_07_26_baseline.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/4.yaml")
+#config = load_experiment_config("configs/experiments/d07_07_26_baseline.yaml")
 
 env = config["environment"](config["env_params"])
 telescope = env.telescope
@@ -236,7 +237,7 @@ def single_step():
         advance()
         step += 1
     else:
-        if step != 0: print(step)
+        if step != 0: print(str(step) + " steps")
         step = 0
 
 """

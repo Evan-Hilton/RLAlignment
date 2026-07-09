@@ -50,7 +50,7 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-tele = "configs/telescopes/fine_alignment/n_panels/4.yaml"
+tele = "configs/telescopes/fine_alignment/n_panels/8.yaml"
 #tele = "configs/telescopes/example.yaml"
 env = NaiveImageEnv({
     "max_steps": 512,

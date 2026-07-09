@@ -12,7 +12,7 @@ sigma_r_max: 10.0
 sigma_theta_center: 3.0
 sigma_theta_max: 3.8
 centroid_type: gaussian
-centroid_flux_max: 140
+centroid_flux_max: 70
 
 # centroid initial characteristics
 init_scatter_pix: 300.0
