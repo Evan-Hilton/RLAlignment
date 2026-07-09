@@ -1,0 +1,4 @@
+current_image_cnn: configs/architectures/normCnn.yaml
+previous_images_cnn: configs/architectures/normCnn.yaml
+centroid_features: 32
+centroid_network: [32, 16]
