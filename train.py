@@ -39,7 +39,9 @@ if __name__ == "__main__":
     )
 
     ppoConfig = config["train_config"]
+    # by default we collect 10 heatmaps (or n heatmaps where n is the number of rollouts if n<10)
     model = LoggingPPO( # LoggingPPO is a subclass of PPO ChatGPT helped make which just adds more per epoch tensorboard debug logging
+        heatmap_frequency=int((config["total_timesteps"] / (config["n_training_envs"] * ppoConfig["n_steps"])) / 10),
         env = env,
         **ppoConfig
     )

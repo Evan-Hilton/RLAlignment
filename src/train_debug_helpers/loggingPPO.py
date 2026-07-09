@@ -5,9 +5,54 @@ import torch as th
 from gymnasium import spaces
 from torch.nn import functional as F
 
+import matplotlib.pyplot as plt
+from stable_baselines3.common.logger import Figure
+
 from stable_baselines3.common.utils import explained_variance
 
 class LoggingPPO(PPO):
+    def __init__(self,
+                 heatmap_frequency, 
+                 policy, 
+                 env, 
+                 learning_rate = 0.0003, 
+                 n_steps = 2048, 
+                 batch_size = 64, 
+                 n_epochs = 10, 
+                 gamma = 0.99, 
+                 gae_lambda = 0.95, 
+                 clip_range = 0.2, 
+                 clip_range_vf = None, 
+                 normalize_advantage = True, 
+                 ent_coef = 0, 
+                 vf_coef = 0.5, 
+                 max_grad_norm = 0.5, 
+                 use_sde = False, 
+                 sde_sample_freq = -1, 
+                 rollout_buffer_class = None, 
+                 rollout_buffer_kwargs = None, 
+                 target_kl = None, 
+                 stats_window_size = 100, 
+                 tensorboard_log = None, 
+                 policy_kwargs = None, 
+                 verbose = 0, 
+                 seed = None, 
+                 device = "auto", 
+                 _init_setup_model = True
+            ):
+        super().__init__(policy, env, learning_rate, n_steps, batch_size, n_epochs, gamma, gae_lambda, clip_range, clip_range_vf, normalize_advantage, ent_coef, vf_coef, max_grad_norm, use_sde, sde_sample_freq, rollout_buffer_class, rollout_buffer_kwargs, target_kl, stats_window_size, tensorboard_log, policy_kwargs, verbose, seed, device, _init_setup_model)
+
+        self.heatmap_frequency = heatmap_frequency
+
+        # =========== ChatGPT log update =============
+        # Store history:
+        # shape = (number of rollouts, n_epochs)
+        self.policy_loss_history = []
+        self.value_loss_history = []
+        self.kl_history = []
+        self.clip_fraction_history = []
+        self.entropy_history = []
+        # ========================
 
     def train(self) -> None:
         """
@@ -26,6 +71,14 @@ class LoggingPPO(PPO):
         entropy_losses = []
         pg_losses, value_losses = [], []
         clip_fractions = []
+
+        # =========== ChatGPT log update =============
+        rollout_policy_losses = []
+        rollout_value_losses = []
+        rollout_kl = []
+        rollout_clip_fraction = []
+        rollout_entropy = []
+        # ========================
 
         continue_training = True
         # train for n_epochs epochs
@@ -135,71 +188,57 @@ class LoggingPPO(PPO):
             
             # =========== ChatGPT log update =============
             # Mean over minibatches in this optimization epoch
-            self.logger.record(
-                f"epoch/policy_loss_{epoch+1}",
-                np.mean(epoch_pg_losses)
-            )
+            policy_epoch_loss = np.mean(epoch_pg_losses)
+            value_epoch_loss = np.mean(epoch_value_losses)
+            kl_epoch = np.mean(epoch_approx_kl_divs)
+            clip_epoch = np.mean(epoch_clip_fractions)
+            entropy_epoch = np.mean(epoch_entropy_losses)
 
-            self.logger.record(
-                f"epoch/value_loss_{epoch+1}",
-                np.mean(epoch_value_losses)
-            )
-
-            self.logger.record(
-                f"epoch/entropy_loss_{epoch+1}",
-                np.mean(epoch_entropy_losses)
-            )
-
-            self.logger.record(
-                f"epoch/approx_kl_{epoch+1}",
-                np.mean(epoch_approx_kl_divs)
-            )
-
-            self.logger.record(
-                f"epoch/clip_fraction_{epoch+1}",
-                np.mean(epoch_clip_fractions)
-            )
-
-            # Variability across minibatches
-            self.logger.record(
-                f"epoch/policy_loss_std_{epoch+1}",
-                np.std(epoch_pg_losses)
-            )
-
-            self.logger.record(
-                f"epoch/value_loss_std_{epoch+1}",
-                np.std(epoch_value_losses)
-            )
-
-            self.logger.record(
-                f"epoch/entropy_loss_std_{epoch+1}",
-                np.std(epoch_entropy_losses)
-            )
-
-            self.logger.record(
-                f"epoch/approx_kl_std_{epoch+1}",
-                np.std(epoch_approx_kl_divs)
-            )
-
-            self.logger.record(
-                f"epoch/clip_fraction_std_{epoch+1}",
-                np.std(epoch_clip_fractions)
-            )
-
-            self.logger.record(
-                f"epoch/grad_norm_{epoch+1}",
-                np.mean(epoch_grad_norms)
-            )
-
-            self.logger.record(
-                f"epoch/grad_norm_std_{epoch+1}",
-                np.std(epoch_grad_norms)
-            )
+            rollout_policy_losses.append(policy_epoch_loss)
+            rollout_value_losses.append(value_epoch_loss)
+            rollout_kl.append(kl_epoch)
+            rollout_clip_fraction.append(clip_epoch)
+            rollout_entropy.append(entropy_epoch)
             # ==============================
 
             self._n_updates += 1
             if not continue_training:
                 break
+        
+        # =========== ChatGPT log update =============
+        self.policy_loss_history.append(rollout_policy_losses)
+        self.value_loss_history.append(rollout_value_losses)
+        self.kl_history.append(rollout_kl)
+        self.clip_fraction_history.append(rollout_clip_fraction)
+        self.entropy_history.append(rollout_entropy)
+
+        if self._n_updates % self.heatmap_frequency == 0:
+            self.log_heatmap(
+                self.policy_loss_history,
+                "Policy Loss",
+                "heatmaps/policy_loss"
+            )
+            self.log_heatmap(
+                self.value_loss_history,
+                "Value Loss",
+                "heatmaps/value_loss"
+            )
+            self.log_heatmap(
+                self.kl_history,
+                "Approx KL",
+                "heatmaps/approx_kl"
+            )
+            self.log_heatmap(
+                self.clip_fraction_history,
+                "Clip Fraction",
+                "heatmaps/clip_fraction"
+            )
+            self.log_heatmap(
+                self.entropy_history,
+                "Entropy",
+                "heatmaps/entropy"
+            )
+        # ========================
 
         explained_var = explained_variance(self.rollout_buffer.values.flatten(), self.rollout_buffer.returns.flatten())
 
@@ -218,3 +257,30 @@ class LoggingPPO(PPO):
         self.logger.record("train/clip_range", clip_range)
         if self.clip_range_vf is not None:
             self.logger.record("train/clip_range_vf", clip_range_vf)
+    
+    def log_heatmap(self, data, title, tag):
+
+        data = np.array(data)
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        im = ax.imshow(
+            data,
+            aspect="auto",
+            interpolation="nearest"
+        )
+
+        ax.set_xlabel("Optimization Epoch")
+        ax.set_ylabel("PPO Update")
+
+        ax.set_title(title)
+
+        fig.colorbar(im, ax=ax)
+
+        self.logger.record(
+            tag,
+            Figure(fig, close=True),
+            exclude=("stdout", "log", "json")
+        )
+
+        plt.close(fig)
