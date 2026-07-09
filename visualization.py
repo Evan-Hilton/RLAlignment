@@ -32,7 +32,7 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.01.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.05.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.20.yaml")
-config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/6.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/10.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_baseline.yaml")
 
 env = config["environment"](config["env_params"])
@@ -47,7 +47,7 @@ try:
     model = load_model(config["model_save_path"], env)
 except:
     try:
-        model = load_model(config["model_save_path"] + "/model_7500000_steps", env)
+        model = load_model(config["model_save_path"] + "/model_5500000_steps", env)
     except:
         print("You tried to load a model that was saved multiple times. Please specify which model you want in the try block above.")
 obs = env.reset()[0]
