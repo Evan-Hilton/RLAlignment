@@ -6,8 +6,9 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.env_checker import check_env
 
 from configs.loaders.load_config import load_experiment_config
-from src.debug_callbacks.modelSaveCallback import ModelSaveCallback
-from src.debug_callbacks.featureStatsCallback import *
+from src.train_debug_helpers.modelSaveCallback import ModelSaveCallback
+from src.train_debug_helpers.featureStatsCallback import *
+from src.train_debug_helpers.loggingPPO import *
 
 # ================ CHECK ENVIRONMENT ================
 
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     )
 
     ppoConfig = config["train_config"]
-    model = PPO(
+    model = LoggingPPO( # LoggingPPO is a subclass of PPO ChatGPT helped make which just adds more per epoch tensorboard debug logging
         env = env,
         **ppoConfig
     )
