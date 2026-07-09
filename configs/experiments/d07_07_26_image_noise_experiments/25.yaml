@@ -1,6 +1,6 @@
 environment: AllDictObsEnvDiffImgDiffRewOneHotID
 model_save_path: runs/fine_alignment/d07_07_26_img_noise/25/agents
-total_timesteps: 5000000
+total_timesteps: 10000000
 save_frequency: 500000
 
 env_params:
