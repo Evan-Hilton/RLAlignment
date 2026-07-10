@@ -338,7 +338,7 @@ pygame.display.set_caption(game_name)
 clock = pygame.time.Clock()
 run = True
 font = pygame.font.SysFont('Times New Roman', 15)
-logo_visible = True # set to True to see logo in corner
+logo_visible = False # set to True to see logo in corner
 draw_screen_center = True
 
 buttons = [
