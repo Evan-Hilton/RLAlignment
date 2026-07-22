@@ -67,7 +67,7 @@ class Telescope:
     """
     def rescale_image(self):
         self.image -= self.image.min()
-        self.image *= 255 * (1 / self.image.max())
+        self.image *= 254 * (1 / self.image.max())
     
     """
         creates a new image which contains all centroids represented by gaussian
