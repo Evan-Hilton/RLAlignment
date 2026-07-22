@@ -50,7 +50,7 @@ centroid_detection_color2 = (17, 74, 77)
 #     "bg_level": 6,
 #     "read_noise": 11
 # })
-tele = "configs/telescopes/fine_alignment/img_noise/img_noise_10.yaml"
+tele = "configs/telescopes/fine_alignment/10_panel_img_noise/3.yaml"
 #tele = "configs/telescopes/example.yaml"
 env = NaiveImageEnv({
     "max_steps": 512,
@@ -64,7 +64,11 @@ det_cet = None
 
 def main_loop(FRAME): 
    global det_cet
-   det_cet = ImageAnalyzer._sep_detection(env.telescope.image, dict())
+   det_cet = ImageAnalyzer._sep_detection(env.telescope.image, {"threshold_sigma": 2.5,
+                                                                "minarea": 20,
+                                                                "deblend_nthresh": 8,
+                                                                "deblend_cont": 0.05,
+                                                                })
    columns = [
         "X_IMAGE",
         "Y_IMAGE",
@@ -93,8 +97,6 @@ def main_loop(FRAME):
    obs[:, 6] /= 5
 
    obs[:, 7] /= 90
-   
-   print(obs)
 
 """
     Renders the current live view of what the telescope sees.

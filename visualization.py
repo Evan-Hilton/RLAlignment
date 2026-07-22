@@ -165,6 +165,35 @@ def render_dict_images(surface, observation):
 def is_image(image):
     return image.shape[1:] == (env.telescope.img_size, env.telescope.img_size)
 
+# ----------------------------------------------------- PSF visualization --------------------------------------------------------------
+
+def draw_graph(surf, data):
+    height, width = surf.get_rect().height, surf.get_rect().width
+    minimum, maximum = np.min(data), np.max(data)
+    data += np.abs(minimum)
+    data = data * (float(height)/float(maximum))
+    n = len(data)
+    points = [
+        (
+            i * (width - 1) / (n - 1),
+            height - float(data[i])  # flip y-axis
+        )
+        for i in range(n)
+    ]
+    pygame.draw.lines(surf, graph_color, False, points, 2)
+
+def render_psf_view(surface, graph_col):
+    surface.fill(background_color)
+    graph1surface = pygame.Surface((surface.get_rect().width - 60, surface.get_rect().height * 0.5 - 45))
+    graph2surface = pygame.Surface((surface.get_rect().width - 60, surface.get_rect().height * 0.5 - 45))
+    height, _ = telescope.image.shape
+    outline_window(surface, graph1surface, (30, 30), "current psf", font)
+    outline_window(surface, graph2surface, (30, 30 + graph1surface.get_rect().height + 30), "single panel psf", font)
+    draw_graph(graph1surface, telescope.image[height // 2, :])
+    draw_graph(graph2surface, np.array([2, 2, 2, 1, 5, 2]))
+    surface.blit(graph1surface, (30, 30))
+    surface.blit(graph2surface, (30, 30 + graph1surface.get_rect().height + 30))
+
 # ----------------------------------------------------- UI Buttons --------------------------------------------------------------
 
 """
@@ -366,7 +395,7 @@ if logo_visible: logo = pygame.image.load("src/evaluation/rosalina.png").convert
 # sub windows
 telescope_view =    pygame.Surface((512, 512))  # at 30  , 30
 telescope_location = (30, 30)
-agent_view =        pygame.Surface((895, 514))  # at 573 , 30
+agent_view =        pygame.Surface((208, 514))  # at 573 , 30
 agent_location = (573, 30)
 ui_view =           pygame.Surface((160, 292))  # at 30  , 576
 ui_location = (30, 576)
@@ -374,6 +403,8 @@ reward_view =       pygame.Surface((292, 292))  # at 1175, 576
 reward_location = (1175, 576)
 feature_view =      pygame.Surface((922, 292))  # at 220 , 576
 feature_location = (220, 576)
+psf_view =          pygame.Surface((895-30-208, 514))
+psf_location = (573+208+30, 30)
 
 reset_sim()
 
@@ -402,6 +433,7 @@ while run:
     outline_window(main_window, ui_view, ui_location, "ui", font)
     outline_window(main_window, reward_view, reward_location, "reward vs time", font)
     outline_window(main_window, feature_view, feature_location, "feature vector", font)
+    outline_window(main_window, psf_view, psf_location, "psf", font)
 
     # render the windows themselves
     render_telescope_screen(telescope_view)
@@ -409,12 +441,14 @@ while run:
     render_UI_screen(ui_view)
     render_reward_screen(reward_view, graph_color, main_window)
     render_feature_view(feature_view, graph_color)
+    render_psf_view(psf_view, graph_color)
 
     main_window.blit(telescope_view, telescope_location)
     main_window.blit(agent_view, agent_location)
     main_window.blit(ui_view, ui_location)
     main_window.blit(reward_view, reward_location)
     main_window.blit(feature_view, feature_location)
+    main_window.blit(psf_view, psf_location)
 
     input_loop(pygame.key.get_pressed(), pygame.mouse.get_pressed(), pygame.mouse.get_pos()) # a list of all inputs
 

@@ -12,11 +12,11 @@ class AllDictObsEnvDiffImgDiffRew(AllDictObsEnvDiffImg):
             d = self.telescope.multiple_uv_to_fp(detected_centroids * self.telescope.img_size) - self.telescope.center[None, :]
         except:
             d = np.zeros_like(self.telescope.true_centroids,dtype=np.float32)
-        mean_r2 = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
-        mean_r2 /= self.telescope.init_scatter_pix
+        mean_r = float(np.mean(np.sqrt(np.sum(d**2, axis=1))))
+        mean_r /= self.telescope.init_scatter_pix
 
         mean_size = observation["detected_centroids"][:, [5, 6]]
         mean_size = np.max(mean_size, axis=0)
         mean_size = np.mean(mean_size)
 
-        return float(-mean_r2 - mean_size)
+        return float(-mean_r - mean_size)

@@ -9,6 +9,7 @@ from src.environments.fine_alignment.stacked_image_with_action_env import *
 """
 class AllDictObsEnv(StackedImageWithActionEnv):
     def __init__(self, env_config):
+        self.env_config = env_config # save it just so we can use sep params
         super().__init__(env_config)
         self.observation_space = spaces.Dict({
             "current_image": spaces.Box( # observation space
@@ -51,7 +52,10 @@ class AllDictObsEnv(StackedImageWithActionEnv):
     
     def get_observation(self):
         # detect all centroids and put them in a dataframe
-        det_cet = ImageAnalyzer._sep_detection(self.telescope.image, dict())
+        sep_params = {}
+        if "sep_params" in self.env_config:
+            sep_params = self.env_config["sep_params"]
+        det_cet = ImageAnalyzer._sep_detection(self.telescope.image, sep_params)
         columns = [
                 "X_IMAGE",
                 "Y_IMAGE",
@@ -71,7 +75,7 @@ class AllDictObsEnv(StackedImageWithActionEnv):
         obs[:, 0] /= self.telescope.img_size    # X_IMAGE
         obs[:, 1] /= self.telescope.img_size    # Y_IMAGE
 
-        obs[:, 2] /= 5e+04                      # FLUX_ISO
+        obs[:, 2] /= 1e+05                      # FLUX_ISO
         obs[:, 3] /= 256                        # FLUX_MAX
 
         obs[:, 4] /= 256                        # BACKGROUND

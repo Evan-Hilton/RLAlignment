@@ -101,7 +101,13 @@ class PSCT_P12(Telescope):
         # detector noise and background
         self.image += self.bg_level
         self.image += self.rng.normal(scale=self.read_noise, size=self.image.shape)
-        self.clip_image()
+        if "scale" in self.config:
+            if self.config["scale"] == "normalize":
+                self.rescale_image()
+            else:
+                self.clip_image()
+        else:
+            self.clip_image()
 
     # ========================== Helper Methods ==========================
 

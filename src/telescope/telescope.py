@@ -66,8 +66,7 @@ class Telescope:
         but maintain the same shape
     """
     def rescale_image(self):
-        if self.image.min() < 0:
-            self.image += self.image.min()
+        self.image -= self.image.min()
         self.image *= 255 * (1 / self.image.max())
     
     """

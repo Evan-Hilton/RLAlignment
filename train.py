@@ -12,7 +12,7 @@ from src.train_debug_helpers.loggingPPO import *
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d07_07_26_tube_dragging_experiments/0.01.yaml")
+config = load_experiment_config("configs/experiments/d07_22_26_image_noise_10_panels_experiments/3.yaml")
 
 env = config["environment"](config["env_params"])
 
@@ -41,8 +41,8 @@ if __name__ == "__main__":
     ppoConfig = config["train_config"]
     # by default we collect 10 heatmaps (or n heatmaps where n is the number of rollouts if n<10)
     model = LoggingPPO( # LoggingPPO is a subclass of PPO ChatGPT helped make which just adds more per epoch tensorboard debug logging
-        heatmap_frequency=int((config["total_timesteps"] / (config["n_training_envs"] * ppoConfig["n_steps"])) / 20),
-        #heatmap_frequency=1,
+        #heatmap_frequency=int((config["total_timesteps"] / (config["n_training_envs"] * ppoConfig["n_steps"])) / 20),
+        heatmap_frequency=500,
         env = env,
         **ppoConfig
     )
