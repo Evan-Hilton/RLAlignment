@@ -1,0 +1,2 @@
+The goal of this repository is to provide the code related to the alignment of simulated telescopes from CTAO using Reinforcement Learning.
+The layout generally is focused on creating the tools needed to easily create and iterate agents and their environments, as well as good design to categorize and sort already trained agents and their environments.

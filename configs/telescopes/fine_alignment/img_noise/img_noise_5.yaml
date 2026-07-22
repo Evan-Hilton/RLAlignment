@@ -1,0 +1,28 @@
+# image characteristics
+n_panels: 3
+img_size: 64
+center_fp: [1612.2804, 1024.4423]
+img_fov_pix: 600.0
+
+# centroid characteristics
+# the width/height of the centroids are linear with respect to distance from the center
+# the max values are defined to be how wide the distribution is when the centroid is img_size/2 pixels away from center
+sigma_r_center: 3.0
+sigma_r_max: 10.0
+sigma_theta_center: 3.0
+sigma_theta_max: 3.8
+centroid_type: gaussian
+centroid_flux_max: 140
+
+# centroid initial characteristics
+init_scatter_pix: 300.0
+init_rxry_scale: 0.05
+
+# panel rotation scale
+action_scale: 0.4
+action_noise_scale: 0 # 0 for no noise, 1 for noise comparable to the rotation itself
+tube_dragging_scale: 0 # 0 for no effect, 1 for huge effect
+
+# image noise
+bg_level: 10
+read_noise: 5
