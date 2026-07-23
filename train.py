@@ -12,7 +12,7 @@ from src.train_debug_helpers.loggingPPO import *
 
 # ================ CHECK ENVIRONMENT ================
 
-config = load_experiment_config("configs/experiments/d07_22_26_image_noise_10_panels_experiments/3.yaml")
+config = load_experiment_config("configs/experiments/d07_22_26_image_noise_10_panels_experiments/5.yaml")
 
 env = config["environment"](config["env_params"])
 
