@@ -32,7 +32,8 @@ button_border_color = (255, 255, 255) # white
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.01.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.05.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_actuator_noise_experiments/0.20.yaml")
-config = load_experiment_config("configs/experiments/d07_22_26_image_noise_10_panels_experiments/3.yaml")
+#config = load_experiment_config("configs/experiments/d07_22_26_image_noise_10_panels_experiments/3.yaml")
+config = load_experiment_config("configs/experiments/d07_07_26_n_panels_experiments/10.yaml")
 #config = load_experiment_config("configs/experiments/d07_07_26_baseline.yaml")
 
 env = config["environment"](config["env_params"])
@@ -190,7 +191,7 @@ def render_psf_view(surface, graph_col):
     outline_window(surface, graph1surface, (30, 30), "current psf", font)
     outline_window(surface, graph2surface, (30, 30 + graph1surface.get_rect().height + 30), "single panel psf", font)
     draw_graph(graph1surface, telescope.image[height // 2, :])
-    draw_graph(graph2surface, np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 3516, 27, 516, 22, 3, 68, 69, 70, 71, 72, 572, 3000]))
+    draw_graph(graph2surface, np.array([1,1,1,1,1]))
     surface.blit(graph1surface, (30, 30))
     surface.blit(graph2surface, (30, 30 + graph1surface.get_rect().height + 30))
 
